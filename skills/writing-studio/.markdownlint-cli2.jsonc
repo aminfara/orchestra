@@ -1,0 +1,13 @@
+{
+  // Markdownlint config for the writing-studio skill.
+  // These are prose-heavy instruction docs, so a couple of code-oriented
+  // rules are intentionally relaxed.
+  "config": {
+    // Prose lines are not hard-wrapped; long lines are expected and aid editing.
+    "MD013": false,
+    // Angle-bracket placeholders (<format>, <name>) and HTML comments are
+    // intentional in the format templates.
+    "MD033": false
+  },
+  "globs": ["**/*.md"]
+}
