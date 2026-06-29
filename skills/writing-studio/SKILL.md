@@ -1,6 +1,6 @@
 ---
 name: writing-studio
-description: Write or review professional, human-facing prose so the result is clear, well-structured, correctly shaped for its document type, and free of AI-sounding filler. Use this skill WHENEVER you are about to write something a person will read (a proposal, email, chat or Slack message, document or wiki page, blog post, announcement, status update, RFC or design doc, release notes, exec brief, incident report) OR when asked to review, improve, polish, critique, proofread, tighten, sharpen, or shorten any existing text. Prefer it over ad-hoc style fixes, especially for multi-paragraph or long-form writing. Do NOT use it for code, code comments, commit messages, machine-readable data (JSON/YAML/CSV), or trivial one-line replies.
+description: Write or review professional, human-facing prose so the result is clear, well-structured, correctly shaped for its document type, and free of AI-sounding filler. Use this skill WHENEVER you are about to write something a person will read (a proposal, email, chat or Slack message, document or wiki page, blog post, announcement, status update, RFC or design doc, release notes, exec brief, incident report, peer performance feedback) OR when asked to review, improve, polish, critique, proofread, tighten, sharpen, or shorten any existing text. Prefer it over ad-hoc style fixes, especially for multi-paragraph or long-form writing. Do NOT use it for code, code comments, commit messages, machine-readable data (JSON/YAML/CSV), or trivial one-line replies.
 ---
 
 # Writing Studio
@@ -112,6 +112,7 @@ Run the **anti-hallucination pass** (universal-rules.md A9): classify each speci
 - `references/ai-patterns.md` — LLM tells to suppress so text does not read as machine-written. Read every time you draft.
 - `references/formats/` — per-format templates and rules. Currently supported:
   - `references/formats/proposal/` — internal decision/strategy proposal. Load `proposal.md` (base) + one level file: `proposal-floater.md`, `proposal-onepager.md`, or `proposal-full.md`.
+  - `references/formats/peer-feedback.md` — peer performance feedback (Strengths + Opportunities). Single file; no completeness levels. Collects receiver role, optional role expectations, and optional org values before generating or reviewing SBI-structured feedback items.
   - `references/formats/_TEMPLATE.md` — scaffold for adding a new format (single-file or base+levels).
 
 To grow the library, copy `_TEMPLATE.md`, fill in the template, default axes, format-specific rules, and which conditional rules to relax, then add a line to the supported list above. Build format-by-format; a small set of well-specified formats beats a large set of thin ones.
