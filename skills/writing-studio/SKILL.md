@@ -1,6 +1,6 @@
 ---
 name: writing-studio
-description: Write or review professional, human-facing prose so the result is clear, well-structured, correctly shaped for its document type, and free of AI-sounding filler. Use this skill WHENEVER you are about to write something a person will read (a proposal, email, chat or Slack message, document or wiki page, blog post, announcement, status update, RFC or design doc, release notes, exec brief, incident report, peer performance feedback) OR when asked to review, improve, polish, critique, proofread, tighten, sharpen, or shorten any existing text. Prefer it over ad-hoc style fixes, especially for multi-paragraph or long-form writing. Do NOT use it for code, code comments, commit messages, machine-readable data (JSON/YAML/CSV), or trivial one-line replies.
+description: Write or review professional, human-facing prose so the result is clear, well-structured, correctly shaped for its document type, and free of AI-sounding filler. Use this skill WHENEVER you are about to write something a person will read (a proposal, email, chat or Slack message, document or wiki page, blog post, announcement, status update, RFC or design doc, release notes, exec brief, incident report, peer performance feedback, RACI or roles-and-responsibilities matrix) OR when asked to review, improve, polish, critique, proofread, tighten, sharpen, or shorten any existing text. Prefer it over ad-hoc style fixes, especially for multi-paragraph or long-form writing. Do NOT use it for code, code comments, commit messages, machine-readable data (JSON/YAML/CSV), or trivial one-line replies.
 ---
 
 # Writing Studio
@@ -47,7 +47,7 @@ Before drafting or reviewing, resolve these from context. Infer silently when co
 - **medium** — where it will be read: email, chat, wiki page or document, issue tracker, printed page. This sets length and formatting conventions.
 - **tone** — formal, neutral, friendly, persuasive, authoritative, visionary, urgent, or a free-form description ("warm but direct"). If unspecified, use the format's default.
 - **audience** — who reads it, what they know, how much attention they will give. This drives tone and vocabulary.
-- **completeness** (only for formats that define levels, e.g. proposal) — how fully worked-out this should be: a quick floater, a one-pager, or the full version. Infer from the request: "shoot a quick note proposing X" → floater; "write up a one-pager" → one-pager; "write the proposal doc" → full. Ask if unclear. Formats without levels (e.g. blog post) ignore this.
+- **completeness** (only for formats that define levels, e.g. proposal, RACI) — how fully worked-out this should be. The level names are format-specific and listed in that format's base file. Infer from the request: "shoot a quick note proposing X" → proposal floater; "write up a one-pager" → one-pager; "write the proposal doc" → full; "drop a note in the channel on who owns what" → RACI prose. Ask if unclear. Formats without levels (e.g. blog post, peer feedback) ignore this.
 
 Example: "Write an email to the team reporting the launch slip" resolves cleanly (format=email, purpose=report, medium=email, audience=team) — proceed. "Write something about X" does not — ask for format and destination.
 
@@ -112,6 +112,7 @@ Run the **anti-hallucination pass** (universal-rules.md A9): classify each speci
 - `references/ai-patterns.md` — LLM tells to suppress so text does not read as machine-written. Read every time you draft.
 - `references/formats/` — per-format templates and rules. Currently supported:
   - `references/formats/proposal/` — internal decision/strategy proposal. Load `proposal.md` (base) + one level file: `proposal-floater.md`, `proposal-onepager.md`, or `proposal-full.md`.
+  - `references/formats/raci/` — RACI responsibility matrix (Responsible / Accountable / Consulted / Informed). Load `raci.md` (base) + one level file: `raci-prose.md` (plain text for Slack or email) or `raci-onepager.md` (the wiki-page artifact). The base carries the *ownership clause*: the mandatory sections that stop a RACI becoming a "not my job" shield or a blame map.
   - `references/formats/peer-feedback.md` — peer performance feedback (Strengths + Opportunities). Single file; no completeness levels. Collects receiver role, optional role expectations, and optional org values before generating or reviewing SBI-structured feedback items.
   - `references/formats/_TEMPLATE.md` — scaffold for adding a new format (single-file or base+levels).
 
