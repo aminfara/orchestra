@@ -91,7 +91,7 @@ Every section a RACI can contain, defined once. Level files say **which sections
 - **Shared outcome** (mandatory) — one or two sentences: the result everyone named is jointly aiming at. Comes before any letters.
 - **Context header** — overall accountable owner, maintainer of the document, last reviewed, review cadence, status.
 - **Legend** — the duty-framed table above. Full table at one-pager level; compressed to a half-line, or dropped, in prose.
-- **Parties key** — role title → named person. Keeps the matrix columns role-based so the artifact survives a re-org.
+- **Parties key** — role title → named person. Keeps the matrix cells role-based so the artifact survives a re-org.
 - **Assignments** (mandatory) — the matrix (one-pager) or one line per activity (prose). Exactly one A per activity; at least one R.
 - **Consult and inform expectations** — how C's input is collected and by when; what I's get, through which channel, on what cadence. This is what makes C and I real rather than ornamental.
 - **Decision rights and escalation** — default decider per recurring decision area, who is consulted, and the escalation path when it stalls.
