@@ -111,8 +111,8 @@ Run the **anti-hallucination pass** (universal-rules.md A9): classify each speci
 - `references/universal-rules.md` — always-on rules (incl. the A9 anti-hallucination protocol), conditional rules, and the tone and medium guidance. Read every time.
 - `references/ai-patterns.md` — LLM tells to suppress so text does not read as machine-written. Read every time you draft.
 - `references/formats/` — per-format templates and rules. Currently supported:
-  - `references/formats/proposal/` — internal decision/strategy proposal. Load `proposal.md` (base) + one level file: `proposal-floater.md`, `proposal-onepager.md`, or `proposal-full.md`.
-  - `references/formats/raci/` — RACI responsibility matrix (Responsible / Accountable / Consulted / Informed). Load `raci.md` (base) + one level file: `raci-prose.md` (plain text for Slack or email) or `raci-onepager.md` (the wiki-page artifact). The base carries the *ownership clause*: the mandatory sections that stop a RACI becoming a "not my job" shield or a blame map.
+  - `references/formats/proposal/` — internal decision/strategy proposal. Load the base (proposal.md) plus exactly one level file: proposal-floater.md, proposal-onepager.md, or proposal-full.md.
+  - `references/formats/raci/` — RACI responsibility matrix (Responsible / Accountable / Consulted / Informed). Load the base (raci.md) plus exactly one level file: raci-prose.md for plain text in Slack or email, or raci-onepager.md for the wiki-page artifact. The base carries the *ownership clause*: the mandatory sections that stop a RACI becoming a "not my job" shield or a blame map.
   - `references/formats/peer-feedback.md` — peer performance feedback (Strengths + Opportunities). Single file; no completeness levels. Collects receiver role, optional role expectations, and optional org values before generating or reviewing SBI-structured feedback items.
   - `references/formats/_TEMPLATE.md` — scaffold for adding a new format (single-file or base+levels).
 
