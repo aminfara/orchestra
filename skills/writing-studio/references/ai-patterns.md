@@ -50,6 +50,18 @@ A closing paragraph that restates the opening without adding a takeaway, decisio
 
 Bolding half a sentence, an emoji on every heading, formatting used to decorate rather than aid scanning. Use structure only where it earns its place. (For bullets-vs-prose, see A14.)
 
+## 10. Significance assertions standing in for content
+
+A claim about how important something is, offered instead of the thing itself. This is the phrasal cousin of the puffery in #1: rather than the adjective *crucial*, a whole clause asserting rank. It reads as insight and carries none, and it is the hardest tell to catch because it sounds like a confident writer landing a point.
+
+- *the X that matters, the real question, the real problem, this is the crux, the key insight is, that's what decides it, here's the thing, make no mistake, this is where it breaks down*
+- Bolded or headed leads that only announce the sentence after them: "**The credibility risk is the one that matters.**" followed by the sentence that actually explains why.
+- Titles and section headings that gesture at a topic instead of stating the finding: "What this means in practice", "Rethinking our approach", "The path forward".
+
+**Test:** cover the sentence that follows. If the lead still carries information, keep it. If not, delete it and promote the next sentence, or compress the claim into the lead: "Self-declared RtB splits are gameable and nobody audits them."
+
+Ranking is legitimate when the basis is stated. "This is the only one of the three risks with no mitigation in the plan" is a claim and can be argued with. "This is the risk that matters" is neither.
+
 ---
 
 **The overarching test:** read the draft aloud in your head. If it sounds like a confident person explaining something to a colleague, good. If it sounds like a brochure or a committee-written press release, find the patterns above and cut them.
