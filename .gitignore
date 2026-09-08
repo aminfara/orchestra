@@ -144,3 +144,14 @@ vite.config.ts.timestamp-*
 
 __pycache__/
 tmp/
+
+# Claude Code local state. Holds harness bookkeeping (.cc-writes) and git
+# worktree checkouts under .claude/worktrees/, which are machine-local and must
+# never be committed — a tracked worktree checkout nests a copy of the repo
+# inside itself. Worktrees are unaffected by this: their registry lives in
+# .git/worktrees/, not here, so ignoring the checkouts only silences status
+# noise. Tear them down with `git worktree remove`, not `git clean -xdff`.
+# The repo's own skills live in skills/, so nothing here needs tracking. To
+# share settings later, replace this with the child-glob form so a negation
+# can work: `.claude/*` plus `!.claude/settings.json`.
+.claude/
