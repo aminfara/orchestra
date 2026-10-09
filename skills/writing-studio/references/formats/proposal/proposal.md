@@ -4,14 +4,14 @@ A proposal argues for a decision: do this, fund this, build this, choose this op
 
 This is an **internal decision/strategy proposal**. The audience is internal: a manager, a leadership group, a review forum. The goal is a decision, not a sale. The style is a decision document or design-doc register: clear prose, an explicit recommendation, honest trade-offs, and pre-empted objections.
 
-> Not for selling to a prospective customer, and not for pitching a new product vision. For a product/vision pitch, use the PR/FAQ format — a different shape with a different job.
+> Not for selling to a prospective customer, and not for pitching a new product vision. For a product/vision pitch, use the PR/FAQ format (`prfaq.md`) — a different shape with a different job.
 
 This is the **base** file: what a proposal is, when to use it, the default axes, the canonical section library, and the rules. It does not prescribe how much to write. That depends on **completeness level** (below). Always load this base plus exactly one level file.
 
 ## When to use vs. adjacent formats
 
 - **Proposal** (this format): you want a specific decision from internal stakeholders, backed by problem → solution → impact → cost → plan → risks.
-- **PR/FAQ** (separate format): you are pitching a new product or initiative as a vision, working backward from the customer.
+- **PR/FAQ** (`prfaq.md`): you are pitching a new product or initiative as a vision, working backward from the customer.
 - **RFC / design doc** (separate format): the decision is primarily technical and the emphasis is on the design and its alternatives.
 
 If the request is "convince leadership to do X / fund X / pick X", this format is right.
