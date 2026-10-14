@@ -1,0 +1,14 @@
+{
+  "name": "orchestra-local",
+  "description": "Local development marketplace for the Orchestra plugin, served from this repo's main checkout",
+  "owner": {
+    "name": "Ali Aminfar"
+  },
+  "plugins": [
+    {
+      "name": "orchestra",
+      "source": "./",
+      "description": "A conductor and a small team of agent roles that run software engineering flows"
+    }
+  ]
+}

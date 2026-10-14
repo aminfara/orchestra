@@ -1,0 +1,11 @@
+{
+  "name": "orchestra",
+  "version": "0.1.0",
+  "description": "A conductor and a small team of agent roles that run software engineering flows, plus a coach that improves them from a feedback ledger",
+  "author": {
+    "name": "Ali Aminfar"
+  },
+  "repository": "https://github.com/aminfara/orchestra",
+  "license": "MIT",
+  "keywords": ["orchestration", "agents", "sdlc"]
+}

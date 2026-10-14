@@ -37,7 +37,7 @@ Every phase ends in one of three checkpoints:
 
 Every finding a checker returns, and every change the user asks for at a gate, is recorded in the feedback ledger (see [Feedback loop](feedback-loop.md)).
 
-Some briefings need detail the conductor should not hold, such as walking the user through research findings or technical trade-offs. The sub-agents docs say forked agents keep the AskUserQuestion tool. If a skill forked with `context: fork` can run an interview, those briefings can run in their own context and return only the updated brief. M1 tests this; if it does not work, the conductor runs the briefing from the reports and keeps the artifact detail out.
+Some briefings need detail the conductor should not hold, such as walking the user through research findings or technical trade-offs. Running them in a forked skill would keep that detail out of the conductor's context, but spike 2 showed it cannot work: a skill marked `context: fork`, in the foreground or the background, has no AskUserQuestion tool. The conductor therefore runs every briefing itself, from the roles' reports. Where a briefing needs more than a report holds, the conductor asks the author role for a short, decision-ready digest (the options, what each costs, and the role's recommendation) and briefs from that, rather than opening the artifact.
 
 ## Agents talking to each other
 
