@@ -11,6 +11,12 @@ claude plugin marketplace add /path/to/orchestra
 claude plugin install orchestra@orchestra-local
 ```
 
+Where managed settings block local marketplaces, load it for one CLI session instead:
+
+```bash
+claude --plugin-dir /path/to/orchestra
+```
+
 Start the delivery loop with `orchestra:conductor`.
 
 ## Dependencies

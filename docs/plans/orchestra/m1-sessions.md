@@ -10,7 +10,7 @@ The single-agent baseline, which M1's done criteria compare against, runs later 
 
 ## How the sessions share work
 
-The local marketplace points at this repo's main checkout, so the dogfood session runs whatever is on `main`. The overseer develops in its own worktree and merges to `main` (fast-forward or squash, never `--no-ff`) when a change is ready. The dogfood session picks the change up at its next session start or `/reload-plugins`, whichever the overseer's packaging check shows works in the desktop app. Merging is how a skill change lands between phases rather than during one.
+The dogfood session runs in a terminal as `claude --plugin-dir <main checkout> -w dogfood`, because managed settings block local marketplaces (see spike 5), so it runs whatever is on `main`. The overseer develops in its own worktree and merges to `main` (fast-forward or squash, never `--no-ff`) when a change is ready. The dogfood session picks the change up at its next session start or `/reload-plugins`. Merging is how a skill change lands between phases rather than during one.
 
 The dogfood session writes the todo app, its living docs and its `.orchestra/` folder under `dogfood/todo/` in its own worktree, and tells you that path at each phase boundary. The overseer reads the run log, the feedback ledger and the reports from there. Like the coach, it does not read the dogfood run's artifacts in detail unless a finding calls for it.
 

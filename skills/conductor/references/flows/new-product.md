@@ -40,7 +40,7 @@ Phases 7 to 9 (roadmap, build, acceptance) are not built yet. In this version th
 
 ## Phase 4: Working backwards
 
-**Who:** the same product manager, with `orchestra:writing-studio` in its PR/FAQ format.
+**Who:** the same product manager, with `writing-studio` in its PR/FAQ format.
 
 **Inputs:** `brief.md`, `research/market.md`, `research/technical.md`.
 
