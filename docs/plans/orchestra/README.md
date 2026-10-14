@@ -42,6 +42,7 @@ Each note covers one part and can be read on its own.
 - [Flows](flows.md): the new-product flow phase by phase, and the six other flows.
 - [Tasks](tasks.md): the six task operations, the Git adapter, and tracker adapters after the MVP.
 - [Feedback loop](feedback-loop.md): how findings become concepts, tools or project notes, and how Orchestra gets leaner and cheaper.
+- [M1 sessions](m1-sessions.md): how the overseer and dogfood sessions share work, and the prompt to start each.
 
 ## Plugin layout
 
@@ -80,13 +81,13 @@ M3 carries the most risk, because it is the first milestone where agents change 
 
 ### M1 spikes
 
-M1 starts with five throwaway tests of Claude Code behaviour the design depends on, because a failure in any of them changes how the conductor and roles are written. Each result goes into the relevant design note as a short paragraph.
+M1 starts with five throwaway tests of Claude Code behaviour the design depends on. Four ran on 2026-10-14 from a desktop app session; the results are below and in the design notes they affect.
 
-1. **Resuming an instance.** Can the conductor resume a finished role agent later, with its context intact? The rule "continue while the assignment is the same" depends on it.
-2. **Forked briefings.** Can a skill forked with `context: fork` ask the user questions, so detail-heavy briefings stay out of the conductor's context?
-3. **Agents talking to each other.** Agent teams versus nested subagents, tried on the architecture peer check.
-4. **Nesting from a background agent.** The sub-agents docs say subagents can nest; the GSD notes say background agents cannot.
-5. **Loading the plugin locally.** How a session loads Orchestra's skills and agents straight from this repo, so the dogfood session uses the skills as they change.
+1. **Resuming an instance: passed within a session.** A subagent stored three facts and finished; resumed with SendMessage, it recalled all three exactly. Resuming from a different session, for example after an app restart, is untested; the dogfood run tests it, and the role's note to itself covers the gap.
+2. **Forked briefings: not yet run.** Fork is not an agent type in this session, and testing a `context: fork` skill needs a skill file loaded at session start. The overseer session runs it first, with a throwaway test skill.
+3. **Agents talking to each other: passed with plain subagents.** One background subagent sent a message to a finished sibling by its agent ID; the send resumed the sibling, which reported the exact text. Subagents have SendMessage but not ListAgents, so a role can only message an agent whose ID is in its brief. Agent teams are not needed for this.
+4. **Nesting from a background agent: passed.** A background subagent spawned a nested foreground subagent, which replied as asked. The GSD notes' claim does not hold here. The background subagent also lacked AskUserQuestion, as the docs say.
+5. **Loading the plugin locally: answered from the docs.** `--plugin-dir` and `/reload-plugins` are documented for the CLI but not for the desktop app. A local marketplace works in both, and a local-path plugin loads from its source folder, with edits applied at the next session start or after `/reload-plugins` ([plugin loading docs](https://code.claude.com/docs/en/plugins/loading.md)). You chose the local marketplace; the overseer session verifies reload behaviour in the desktop app first.
 
 ### Dogfooding
 
@@ -125,7 +126,8 @@ Made on 2026-10-14:
 - **Roles:** four team roles split by view (product manager, architect, engineer, reviewer). Each combines several skills and keeps its context across activities that share its view. The product manager is the voice of the customer and also does user experience design when the product has a user interface.
 - **Coach:** necessary, and outside the delivery loop. It has its own entry point and session, reads only the feedback ledger, and works across runs rather than within one.
 - **Task store:** Orchestra's own `tasks` script with pluggable adapters; only the Git adapter is in the MVP.
-- **Agent-to-agent runtime:** decided after the M1 spike.
+- **Agent-to-agent runtime:** plain subagents messaging each other with SendMessage, by agent IDs the conductor puts in each brief; spike 3 showed this works without the experimental agent teams.
+- **Plugin loading during development:** this repo is registered as a local plugin marketplace, so names keep the `orchestra:` prefix and nothing collides with installed skills.
 - **Dogfooding:** a collaborative todo web app in `dogfood/todo/` inside this repo, run from a dogfood session while an overseer session watches it and develops the skills.
 - **M1 order:** spikes first, then the build.
 - **Feedback loop:** a core part of Orchestra from M1. It turns recurring findings into concepts, tools or project notes, never one rule per finding, so the team gets better and cheaper without losing focus.
