@@ -24,6 +24,8 @@ Replace vague terms with concrete ones: who, when, what, how much. "We improved 
 
 Cut words that do not change meaning: *very, really, just, basically, actually, in order to, the fact that, at this point in time, going forward, in terms of*. Cut redundancy and hidden verbs ("make a decision" → "decide", "provide assistance" → "help").
 
+Concision cuts words, and keeps the subject, the verb and the reason of every sentence. When a cut leaves the reader to rebuild the logic, put it back; shorten a document by dropping points, not by compressing the ones that stay (ai-patterns.md #11).
+
 ### A5. Use active voice and name the actor
 
 "The team shipped X on Tuesday", not "X was shipped." Passive is fine when the actor is unknown or irrelevant, or when naming them would assign blame in a blameless context (then depersonalize: "the on-call rotation", not a passive dodge).

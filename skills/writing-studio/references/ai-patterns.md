@@ -62,6 +62,12 @@ A claim about how important something is, offered instead of the thing itself. T
 
 Ranking is legitimate when the basis is stated. "This is the only one of the three risks with no mitigation in the plan" is a claim and can be argued with. "This is the risk that matters" is neither.
 
+## 11. Telegraphic compression
+
+The over-correction of patterns 1 to 10: prose cut until it reads as the writer's notes. Signs: a bare label and colon opening a sentence ("Tests and context: ..."), stacked noun phrases, dropped subjects and verbs, "X: Y; Z: W" runs inside a paragraph, and a conclusion stated without the step that leads to it. It appears most when the writer is asked for "short" and when the writer has just done research the reader has not seen, so their own summary reads as complete to them.
+
+**Test:** the reader-walk (SKILL.md Step 4). Could a colleague who was not in the research restate the sentence without opening a link? If not, write it as a sentence with a subject, a verb and the reason. To make a piece shorter, drop whole points; keep each surviving point in full sentences.
+
 ---
 
 **The overarching test:** read the draft aloud in your head. If it sounds like a confident person explaining something to a colleague, good. If it sounds like a brochure or a committee-written press release, find the patterns above and cut them.
