@@ -130,6 +130,8 @@ Made on 2026-10-14:
 - **Plugin loading during development:** this repo is registered as a local plugin marketplace, so names keep the `orchestra:` prefix and nothing collides with installed skills.
 - **Dogfooding:** a collaborative todo web app in `dogfood/todo/` inside this repo, run from a dogfood session while an overseer session watches it and develops the skills.
 - **M1 order:** spikes first, then the build.
+- **Phase 6 check in M1:** a fresh architect instance briefed as a critic, until the reviewer role exists (2026-10-14).
+- **Skill loading:** roles load each craft skill when a phase's brief names it; agent files preload none (2026-10-14).
 - **Feedback loop:** a core part of Orchestra from M1. It turns recurring findings into concepts, tools or project notes, never one rule per finding, so the team gets better and cheaper without losing focus.
 
 ## Open questions

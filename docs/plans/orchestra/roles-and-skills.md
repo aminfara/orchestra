@@ -42,7 +42,7 @@ The engineer stops and reports "needs a decision" for five kinds of change: irre
 
 ## Craft skills
 
-Skills are what a role knows how to do; a role composes several. Each skill stays short, on the order of 100 to 150 lines, and follows the repo's canonical template. It holds the concepts that help an agent think about the activity and the quality bar for its output, and it does not try to anticipate every mistake.
+Skills are what a role knows how to do; a role composes several. A role loads each skill when a brief names it for the phase, rather than preloading all of them at spawn, so each instance starts lean and carries a long skill such as writing-studio only from the phase that needs it. Each skill stays short, on the order of 100 to 150 lines, and follows the repo's canonical template. It holds the concepts that help an agent think about the activity and the quality bar for its output, and it does not try to anticipate every mistake.
 
 | Skill | Used by | Holds |
 | --- | --- | --- |

@@ -155,7 +155,7 @@ Aliases differ from synonyms in that they do NOT trigger R006 (`non-canonical-he
 
 ## v0.5 rules — adapted from `check-skill`
 
-These rules were inspired by the `check-skill` peer linter. Only generic, project-agnostic checks were adopted (privacy, MARVIN-specific, and Rovo-specific rules were intentionally omitted).
+These rules were inspired by the `check-skill` peer linter. Only generic, project-agnostic checks were adopted; privacy rules and rules specific to one tool or product were omitted.
 
 ### R024 — `name-matches-directory`
 - Severity: error
