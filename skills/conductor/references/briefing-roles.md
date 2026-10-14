@@ -66,7 +66,9 @@ The checker returns a verdict:
 - **Findings:** a count by severity, with the ledger IDs.
 - **For the author:** each finding in a sentence, specific enough to act on without the checker present.
 
-On revise, send the "for the author" section to the author instance, word for word, and ask for a revision and an updated report. Then send the same checker the revised artifact; it marks its findings fixed in the ledger or keeps them open. When a revision does not settle the findings, because author and checker disagree or the fix needs a decision, take it to the user at the gate rather than looping.
+A check should be complete the first time: the checker reports everything it will object to, so the author can fix it in one pass. A re-check is narrower. It confirms each finding was fixed and looks only at what the revision changed, so it does not open new ground. Brief both that way.
+
+On revise, send the "for the author" section to the author instance, word for word, and ask for a revision and an updated report. Then send the same checker the revised artifact; it marks its findings fixed in the ledger or keeps them open. A phase gets at most two rounds of check and revision. If findings are still open after the second, something went wrong earlier: the first check missed things, or the fixes created new problems. Take the open findings to the user at the gate as known issues instead of starting a third round, and say which of the two it looks like.
 
 ## A gate
 

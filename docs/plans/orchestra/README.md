@@ -132,6 +132,7 @@ Made on 2026-10-14:
 - **M1 order:** spikes first, then the build.
 - **Phase 6 check in M1:** a fresh architect instance briefed as a critic, until the reviewer role exists (2026-10-14).
 - **Skill loading:** roles load each craft skill when a phase's brief names it; agent files preload none (2026-10-14).
+- **New-product flow after the first dogfood phases (2026-10-14):** discovery is the product manager's alone, and technical research moves to the start of architecture, scoped by the requirements; a requirements phase with its own PRD (product requirements document) and gate sits between the PR/FAQ and the architecture; briefings close with an open "anything else?" question instead of a confirmation gate; a phase gets at most two rounds of check and revision, and the first check aims to be complete. Applies from the next run, not the one in progress.
 - **Feedback loop:** a core part of Orchestra from M1. It turns recurring findings into concepts, tools or project notes, never one rule per finding, so the team gets better and cheaper without losing focus.
 
 ## Open questions

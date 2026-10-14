@@ -55,8 +55,8 @@ Group the remaining questions so that each AskUserQuestion call holds the ones t
 - why it matters: what changes downstream depending on the answer;
 - the options, with the recommended one first and labelled "(Recommended)", and a short description of what each implies.
 
-When a report carries the question, use the role's recommendation and reasoning, rewritten so it stands alone. When an answer opens a new question, add it to the next batch. Stop asking once every gap is decided, accepted as an assumption, or knowingly left open.
+When a report carries the question, use the role's recommendation and reasoning, rewritten so it stands alone. When an answer opens a new question, add it to the next batch. Stop asking once every gap is decided, accepted as an assumption, or knowingly left open, and close the last batch with one open question: is there anything else the user wants to add, with "No" as the recommended answer.
 
 ### Step 3: Write the brief
 
-Write or update the brief from the answers. State each decision plainly with its reason; mark assumptions as assumptions; list open questions with who answers them and by when. Tell the user what changed in the brief, in a sentence or two, so they can correct it.
+Write or update the brief from the answers. State each decision plainly with its reason; mark assumptions as assumptions; list open questions with who answers them and by when. Tell the user what changed in the brief, in a sentence or two, so they can correct it. This is not a gate: the user has just made these decisions, so carry on unless they correct you.
