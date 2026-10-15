@@ -2,13 +2,13 @@
 
 Part of the [Orchestra plan](README.md). Who does the work, how much context each one keeps, and which skills each one uses.
 
-## Split roles by view, not by activity
+## Draw context boundaries by information, not job title
 
 A real team working on one product is small. A product manager researches the market and writes the PR/FAQ. An architect researches the technology, designs the system, and breaks it into features and a roadmap. An engineer takes a story, breaks it into tasks, writes the tests and the code, refactors, and documents. Another engineer reviews the change for quality, function and security. Each of them does several kinds of work, and each carries one understanding of their assignment from one activity to the next.
 
-Orchestra follows that shape. A role is defined by its view: the altitude it works at and what it is accountable for. Activities that share a view belong to the same role and use the same context. Activities that need a different view belong to a different role, because a separate context is the point: the product manager should not see the problem through the architect's eyes, and the architect's view of the whole system should not be crowded out by one task's code.
+Orchestra borrows that roster's names but not its boundaries. A human team splits because people have different training; an agent can load any skill. What defines a context is shared attention: the work that builds on the same information stays together, and a new context starts where the next work needs different information, where an independent check is needed, where units run in parallel, or where the context is full.
 
-Splitting further than that costs more than it saves. Every new role starts empty and has to be primed with the brief, the research and the architecture before it can work, and each priming spends tokens and loses some of the understanding the previous agent had built. Merging further costs focus, because one context starts holding views that should stay apart.
+The product manager therefore carries one context from market research through feasibility, the PR/FAQ, the PRD with its estimates, and the UX design, because each step uses what the earlier ones found. The architect starts at the approved PRD and UX, where the information changes from what and why to how. Splitting more than that costs more than it saves: every new context has to be primed with the brief, the research and the architecture, and each priming spends tokens and loses some of what the previous agent understood. Merging more costs focus, because one context would carry the customer research, the technical research and the code.
 
 ## Roles
 
@@ -16,7 +16,7 @@ Orchestra has four team roles, which work inside the delivery loop, and a coach,
 
 | Role | View and accountability | Skills | Model, effort | Settings |
 | --- | --- | --- | --- | --- |
-| product manager | The voice of the customer: what to build and why, how it should feel to use, and whether the result keeps the PR/FAQ's promises | research (market and user lenses), writing-studio (PR/FAQ, specs), ux-design (when the product has a user interface), verification (acceptance from the customer's side) | Opus, high | Writes docs and wireframes only; web access |
+| product manager | The voice of the customer: what to build and why, how it should feel to use, and whether the result keeps the PR/FAQ's promises | research (market and user lenses), feasibility, estimation, writing-studio (PR/FAQ, PRD), ux-design (when the product has a user interface), verification (acceptance from the customer's side) | Opus, high | Writes docs and wireframes only; web access |
 | architect | The whole system: how to build it, in what order, and what is expensive to change later | research (technical lens), architecture (target and as-is), planning (features, stories, roadmap), tasks | Opus, high | Writes docs and stories only; web access |
 | engineer | One story, end to end | planning (story into tasks), test-first, debugging, tasks, writing-studio (docs) | Sonnet, medium | `isolation: worktree` |
 | reviewer | Another engineer's change, judged without the author's claims | review (quality, function, security and performance lenses), verification, debugging, feedback | Opus, high | Read-only, except running tests and the product |
@@ -24,7 +24,7 @@ Orchestra has four team roles, which work inside the delivery loop, and a coach,
 
 The conductor, which runs in the main session, is the team's engineering manager. The coach is not part of the team and not part of the software development lifecycle. Its view is how the team works across many runs, not any one product, so mixing it into a flow would put the wrong view in the wrong context. The coach is therefore a skill with its own entry point rather than a subagent the conductor dispatches: you start it in a separate session, it reads only the feedback ledger, and it presents its proposals to you directly. It can spawn its own subagents for eval runs and removal trials. It never reads a run's artifacts, talks to a team role, or touches a run in progress. See [Feedback loop](feedback-loop.md).
 
-Some activities move compared with a larger roster. The product manager is the voice of the customer, so it also absorbs user experience design when the product has a user interface: the journeys and wireframes describe the same customer view as the PR/FAQ, and keeping them in one context means the design follows from the customer promises rather than being re-derived from them. The architect absorbs technical research, roadmap planning and codebase mapping, which is the same whole-system view in different activities. The engineer absorbs task breakdown. The reviewer absorbs testing and acceptance verification, using the functional lens and the verification skill. BMAD's five personas (analyst, product manager, architect, developer, UX designer) are the closest prior art to this roster; Orchestra folds the analyst and UX designer into the product manager ([others notes](../../research/prior-art/others.md)).
+Some activities move compared with a larger roster. The product manager also absorbs feasibility, estimation and user experience design when the product has a user interface: all three rest on the research and requirements it already holds, so the design follows from the customer promises rather than being re-derived from them. The architect absorbs technical research, roadmap planning and codebase mapping, which is the same whole-system view in different activities. The engineer absorbs task breakdown. The reviewer absorbs testing and acceptance verification, using the functional lens and the verification skill. BMAD's five personas (analyst, product manager, architect, developer, UX designer) are the closest prior art to this roster; Orchestra folds the analyst and UX designer into the product manager ([others notes](../../research/prior-art/others.md)).
 
 You set the model rule: Opus at high effort for research, quality assurance and architecture, and Sonnet at medium effort for the engineers who execute. The product manager and coach are judgment roles, so I put them on Opus too. The reviewer runs on Opus while the engineer runs on Sonnet, so the two do not share blind spots. Subagent frontmatter supports `model` and `effort` fields, so each role file sets its own, and the [feedback loop](feedback-loop.md) adjusts them over time.
 
@@ -48,6 +48,8 @@ Skills are what a role knows how to do; a role composes several. A role loads ea
 | --- | --- | --- |
 | briefing | conductor | Interviewing the user: batched, self-contained questions with a recommendation each; the agent finds facts, the user decides |
 | research | product manager, architect | Lenses, primary sources, citing, separating fact from inference |
+| feasibility | product manager, architect | Whether an idea or requirement can be built with known techniques; the unproven parts and the smallest experiment that would settle each |
+| estimation | product manager, architect | Small, medium or large per requirement with the basis and confidence, using the existing architecture doc when there is one; a ranking tool, not a plan |
 | architecture | architect | Target and as-is architecture, three options for every one-way-door decision, ADRs, the glossary, keeping the architecture doc small |
 | planning | architect, engineer | Two altitudes: features, stories and a roadmap from an architecture; tasks from a story. Vertical slices, dependency edges, sizing work to fit one context |
 | test-first | engineer | Test-driven development as a design practice |

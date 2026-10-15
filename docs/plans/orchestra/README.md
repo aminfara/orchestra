@@ -4,7 +4,7 @@ A Claude Code plugin that runs a team of agents through software engineering flo
 
 ## Summary
 
-Orchestra has four layers. A `conductor` skill runs in the main session and owns every conversation with the user. A library of flows (new product, new feature, feature task, bug fix, troubleshoot, understand, rewrite) tells the conductor which phases exist and where the user decides. Four team roles (product manager, architect, engineer, reviewer) do the work and hand it back as files, and a coach outside the team improves how they work. Each role combines several short craft skills and keeps one context across the activities that share its view, the way a small real team does.
+Orchestra has four layers. A `conductor` skill runs in the main session and owns every conversation with the user. A library of flows (idea, requirements, architecture, new feature, feature task, bug fix, troubleshoot, understand, rewrite) tells the conductor which phases exist and where the user decides. Four team roles (product manager, architect, engineer, reviewer) do the work and hand it back as files, and a coach outside the team improves how they work. Each role combines several short craft skills and keeps one context across the activities that share its view, the way a small real team does.
 
 The conductor acts as the team's manager. It knows the state of the flow and who is doing what, and it reads short reports, never the artifacts or the code. When it needs to know whether work is good, it asks another agent to check. Every context window stays scoped to one job, which is the reason to use subagents at all.
 
@@ -22,7 +22,7 @@ The craft skills are Orchestra's own. A survey of ten frameworks (Superpowers, G
 
 **Learn concepts from reviews, not rules.** A finding fixed once and forgotten recurs. Orchestra records every finding against the role, skill and model that produced the work, and the coach looks for the misunderstanding behind recurring findings. The fix is a concept that helps agents reason about a whole class of cases, a deterministic tool, or a note in the project's own docs. Most findings change nothing.
 
-**Split roles by view, not by activity.** A role exists where the work needs a different view: the customer's, the whole system's, one story's, or a reviewer's. Activities that share a view stay in one role and one context, so the architect who researched the technology also designs the system and cuts the roadmap without being primed again. Splitting further buys cleaner contexts at the price of repeating the same priming in each one; merging further puts views that should stay apart into one context. Checking is the exception: a checker is always a separate instance, so it does not inherit the author's assumptions.
+**Draw context boundaries where the information changes, not at job titles.** A context is one agent's attention. It should hold what the next piece of work needs and nothing that distracts from it. Work that builds on the same research, such as the product manager sizing a requirement it just researched, stays in one context, because handing it to another agent loses detail, costs time and lowers accuracy. A new context is justified in four cases: a checker must be independent of the author; units of work are parallel and independent (stories, competitors, codebase areas); bulk raw material goes to a subagent and only a digest returns; or the context is full and the agent writes a note for a fresh one. Skills are the way to share capabilities between contexts: estimation, feasibility and research can be loaded by any agent that needs them, at the depth the moment calls for. Agents stay few; skills carry the specialisms.
 
 **Let the request's type choose the ceremony.** A one-line fix does not need a PR/FAQ. The conductor classifies each request by type and runs the matching flow, whose ceremony fits that type. It states which flow it chose and why, and the user can override.
 
@@ -39,7 +39,7 @@ Each note covers one part and can be read on its own.
 - [Prior art](prior-art.md): what the survey found and the decision table for 18 concerns.
 - [Conductor](conductor.md): briefs, reports, checkpoints, agents talking to each other, the run log and where files live.
 - [Roles and craft skills](roles-and-skills.md): the four team roles and the coach, when an instance continues or starts fresh, the engineer's stop conditions, and which role uses which skill.
-- [Flows](flows.md): the new-product flow phase by phase, and the six other flows.
+- [Flows](flows.md): the idea, requirements and architecture flows phase by phase, and the other flows.
 - [Tasks](tasks.md): the six task operations, the Git adapter, and tracker adapters after the MVP.
 - [Feedback loop](feedback-loop.md): how findings become concepts, tools or project notes, and how Orchestra gets leaner and cheaper.
 - [M1 sessions](m1-sessions.md): how the overseer and dogfood sessions share work, and the prompt to start each.
@@ -57,7 +57,8 @@ orchestra/                         plugin root (this repo)
         run-log.md                 shape of the run log
         flows/                     one file per flow
     coach/                         entry point for the improvement loop; runs in its own session
-    briefing/  research/  ux-design/  architecture/  planning/  test-first/
+    briefing/  research/  feasibility/  estimation/  ux-design/  architecture/
+    planning/  test-first/
     review/  verification/  debugging/  tasks/  feedback/
     writing-studio/                existing; PR/FAQ and other human-facing docs
     skill-linter/                  existing
@@ -71,8 +72,8 @@ The repo already keeps skills under `skills/`, which is the plugin layout. Turni
 | Milestone | Scope | Done when |
 | --- | --- | --- |
 | M0 (done) | Prior-art survey and your review of the decision table | Done 2026-10-14; five rows revised from your answers |
-| M1 | Plugin manifest; conductor with its references; new-product flow phases 1 to 6; product manager and architect roles, with instances resumed across phases; briefing, research, ux-design and architecture skills; the feedback skill and ledger, with checkers recording from the first run; five spikes, run first (see below) | One dogfood run on the collaborative todo app reaches an approved architecture, every gate holds, the conductor never opens an artifact, a reader who was not in the session can follow each artifact, the artifacts compare favorably with a single-agent baseline on the same idea, and a coach retro run by hand turns the ledger into proposals you can judge |
-| M2 | The architect's roadmap phase, the planning skill, the roadmap gate, and the `tasks` script with the Git adapter, tested with parallel claims from two worktrees and two machines | The roadmap from the M1 run contains stories an engineer could start without asking a question |
+| M1 | Plugin manifest; conductor with its references; idea, requirements and architecture flows up to the approved architecture; product manager and architect roles, with instances resumed across phases; briefing, research, feasibility, estimation, ux-design and architecture skills; the feedback skill and ledger, with checkers recording from the first run; five spikes, run first (see below) | One dogfood run on the collaborative todo app reaches an approved architecture, every gate holds, the conductor never opens an artifact, a reader who was not in the session can follow each artifact, the artifacts compare favorably with a single-agent baseline on the same idea, and a coach retro run by hand turns the ledger into proposals you can judge |
+| M2 | The architecture flow's breakdown phase, the planning skill, the breakdown gate, and the `tasks` script with the Git adapter, tested with parallel claims from two worktrees and two machines | The breakdown from the M1 run contains stories an engineer could start without asking a question |
 | M3 | Engineer and reviewer roles; test-first, review and verification skills; acceptance; worktree isolation; merge order; the coach skill as its own entry point, with its first review-sampling and model trials | The M1 idea's MVP is built and passes acceptance |
 | M4 | New-feature, feature-task, bug-fix and troubleshoot flows; debugging skill | Each flow completes on the product built in M3 |
 | M5 | Understand and rewrite flows, with architect instances mapping a codebase in parallel | The understand flow produces a usable map of an existing open-source codebase |
@@ -119,20 +120,22 @@ Made on 2026-10-14:
 - **Name:** the orchestrator skill stays `conductor`, invoked as `orchestra:conductor`.
 - **Doc layout:** living docs under `docs/`, kept small; per-run artifacts under `.orchestra/`. `config.toml` is always committed; whether run folders are committed is decided after the first dogfood run.
 - **Skill overlap:** you will uninstall the overlapping Matt Pocock skills, so Orchestra's craft skills can trigger directly outside a flow.
-- **Ceremony:** the conductor picks the flow from the request's type, and each flow sets its own ceremony. The new-product flow's three briefings and five review gates are accepted.
+- **Ceremony:** the conductor picks the flow from the request's type, and each flow sets its own ceremony. The briefings and review gates of the idea, requirements and architecture flows are accepted.
 - **Engineer autonomy:** five stop conditions (irreversible, security-sensitive, out of scope, architectural, or a backward-incompatible change to a released API not behind a feature gate). Backward-compatible API changes do not stop.
 - **Briefing:** batched questions through the AskUserQuestion tool, each self-contained with its context and a recommended answer.
 - **Architecture and models:** one architect, who sets out three options for every one-way-door decision. Opus at high effort for research, quality assurance and architecture; Sonnet at medium effort for engineers; reviewers on a different model from the author; reviews kept light.
 - **Roles:** four team roles split by view (product manager, architect, engineer, reviewer). Each combines several skills and keeps its context across activities that share its view. The product manager is the voice of the customer and also does user experience design when the product has a user interface.
 - **Coach:** necessary, and outside the delivery loop. It has its own entry point and session, reads only the feedback ledger, and works across runs rather than within one.
 - **Task store:** Orchestra's own `tasks` script with pluggable adapters; only the Git adapter is in the MVP.
-- **Agent-to-agent runtime:** plain subagents messaging each other with SendMessage, by agent IDs the conductor puts in each brief; spike 3 showed this works without the experimental agent teams.
+- **Agent-to-agent runtime:** plain subagents can message each other with SendMessage by agent ID (spike 3), but the idea, requirements and architecture flows use files instead. Messaging stays available for later flows, such as an engineer asking about an interface.
 - **Plugin loading during development:** this repo was to be registered as a local plugin marketplace, but managed settings block local marketplaces, so the dogfood session loads it with `--plugin-dir` in a CLI session instead; names keep the `orchestra:` prefix (2026-10-14).
 - **Dogfooding:** a collaborative todo web app in `dogfood/todo/` inside this repo, run from a dogfood session while an overseer session watches it and develops the skills.
 - **M1 order:** spikes first, then the build.
-- **Phase 6 check in M1:** a fresh architect instance briefed as a critic, until the reviewer role exists (2026-10-14).
+- **Architecture check in M1:** a fresh architect instance briefed as a critic, until the reviewer role exists (2026-10-14).
 - **Skill loading:** roles load each craft skill when a phase's brief names it; agent files preload none (2026-10-14).
 - **New-product flow after the first dogfood phases (2026-10-14):** discovery is the product manager's alone, and technical research moves to the start of architecture, scoped by the requirements; a requirements phase with its own PRD (product requirements document) and gate sits between the PR/FAQ and the architecture; briefings close with an open "anything else?" question instead of a confirmation gate; a phase gets at most two rounds of check and revision, and the first check aims to be complete. Applies from the next run, not the one in progress.
+- **Three flows replace the new-product flow (2026-10-15):** new products are rare and new ideas are common, and not every idea gets built. The idea flow (brief, market research with a fan-out over three competitors, optional feasibility study for novel ideas, findings briefing, PR/FAQ) ends in a go, park or drop decision. The requirements flow turns a PR/FAQ, research or any idea document into a living PRD, in which each requirement has a what, a why, a definition of done, a value and an effort, ranked into an MVP scope; it also serves new features on existing systems. The architecture flow designs for the selected requirements while checking the existing architecture and the remaining requirements, then breaks the work into tasks. Work breakdown stays a phase of the architecture flow, with its own gate, so the architect keeps its context; it can be reopened alone. Findings that break a selected requirement send the conductor back to the requirements flow.
+- **Context boundaries follow information, not roles (2026-10-15):** the product manager researches, checks feasibility, sizes requirements with the estimation skill, writes the PRD and designs the UX, all in one context, because each step needs what the last found. The architect starts from the approved PRD and UX and does technical research, architecture and breakdown. There is one handoff. Estimation is a coarse ranking skill that uses the existing architecture doc when there is one; feasibility is a paper check with a smallest-experiment proposal. A requirement that cannot be sized on paper goes to a spike subagent with one question. UX moves from a parallel architecture-flow phase to the end of the requirements flow, so the two roles no longer negotiate.
 - **Feedback loop:** a core part of Orchestra from M1. It turns recurring findings into concepts, tools or project notes, never one rule per finding, so the team gets better and cheaper without losing focus.
 
 ## Open questions

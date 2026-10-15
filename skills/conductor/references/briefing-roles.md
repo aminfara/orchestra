@@ -9,9 +9,9 @@ How the conductor hands work to a role, continues it, and has it checked.
 | product manager | `orchestra:product-manager` | opus, high | The customer: what to build and why, and how it should feel to use |
 | architect | `orchestra:architect` | opus, high | The whole system: how to build it, and what is expensive to change later |
 
-A role is a definition; an instance is one running agent with its own context. Each spawn returns an agent ID. Record it in the run log, because it is how you resume the instance and how other roles reach it. The model and effort come from the agent file; the ledger records them against each finding.
+A role is a definition; an instance is one running agent with its own context. Each spawn returns an agent ID. Record it in the run log, because it is how you resume the instance. The model and effort come from the agent file; the ledger records them against each finding.
 
-The run ID is the run folder's name, such as `2026-10-14-new-product-todo`. Every brief that may lead to a ledger record carries it.
+The run ID is the run folder's name, such as `2026-10-14-idea-todo`. Every brief that may lead to a ledger record carries it.
 
 ## A brief
 
@@ -25,19 +25,19 @@ Write each brief with these parts, in plain prose or short labelled lines:
 - **Quality bar.** The phase's exit criteria from the flow file, as written there.
 - **Skill.** The craft skill to use for this activity, by its full name (for example `orchestra:research`).
 - **Out of scope.** What this role should leave alone, usually the next phase's work.
-- **Peers.** The agent IDs of roles this one may message directly, and what to ask each about.
+- **Peers.** Only when the flow calls for it: the agent IDs of roles this one may message directly, and what to ask each about. The idea, requirements and architecture flows name none.
 - **Report.** The path to write the report to, under the run folder's `reports/`, named `<phase>-<role>-<activity>.md`.
 - **Ledger.** The ledger path, run ID, flow and phase, so the role can record findings when it checks or when the user's comments reach it.
 
-Parallel instances get briefs that differ for a reason. When the product manager and the architect research at once, each brief names its own lenses and its own questions, so the two answers cover different ground.
+Parallel instances get briefs that differ for a reason. When two instances work at once, such as competitor researchers, each brief names its own subject and questions, so the answers cover different ground.
 
 ## Continue or start fresh
 
-Resume the existing instance with SendMessage when the next phase continues its assignment: the architect who researched the technology designs the architecture. The message names what is new: the phase, the new inputs, the artifact, the quality bar, the skill and the report path, plus the peers and what is out of scope when those change, and any user comments, forwarded word for word.
+Resume the existing instance with SendMessage when the next phase continues its assignment: the product manager who researched a requirement sizes it and writes it into the PRD. The message names what is new: the phase, the new inputs, the artifact, the quality bar, the skill and the report path, plus the peers and what is out of scope when those change, and any user comments, forwarded word for word.
 
 Start a fresh instance when the work is independent of what the instance did, or when the instance reports its context is spent. In the last case it has written a note to itself under the run folder's `notes/`; brief the fresh instance with that note and the role's artifacts.
 
-Run instances in the background when they can work in parallel, and wait for each to finish before you use its result. To let two parallel instances talk, spawn the first, spawn the second with the first's agent ID in its brief, then send the first the second's ID. Messaging a running instance is untested; if it fails, the two compare notes through each other's files at the peer check.
+Run instances in the background when they can work in parallel, and wait for each to finish before you use its result. Prefer files over chat between instances. If a flow does let two parallel instances talk, spawn the first, spawn the second with the first's agent ID in its brief, then send the first the second's ID. Messaging a running instance is untested; if it fails, the two compare notes through each other's files at the peer check.
 
 When a phase closes, record its cost for each role that worked in it: `python3 ${CLAUDE_PLUGIN_ROOT}/skills/feedback/scripts/feedback.py cost --ledger <ledger> --run <run> --phase <n> --role <role> --rounds <revisions> --tokens <tokens>`, with the tokens from the agents' completion notices where they show them.
 

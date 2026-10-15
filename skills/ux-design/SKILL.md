@@ -34,8 +34,8 @@ A good UX design lets an engineer build the screens without asking what goes whe
 
 ## Inputs
 
-- **The approved PR/FAQ**, and the brief.
-- **The architecture**, or the architect's agent ID, for constraints such as what can happen in real time or offline.
+- **The selected requirements** in the PRD, the **approved PR/FAQ** if one exists, and the brief.
+- **The existing architecture doc**, if the system exists, for constraints such as what can happen in real time or offline.
 - **The artifact folder**, usually `<root>/docs/product/ux/`.
 
 ## Output

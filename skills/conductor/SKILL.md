@@ -1,6 +1,6 @@
 ---
 name: conductor
-description: Run an Orchestra flow as the manager of a small team of agent roles. It classifies the request, interviews the user, dispatches the product manager and architect with pointers to files, has every artifact checked by an agent that did not produce it, and holds approval gates. Use when the user asks Orchestra to turn an idea into a new product, asks to run or resume an Orchestra flow, or invokes orchestra:conductor. Not for one-off changes, questions about code, or small fixes a single agent can handle directly.
+description: Run an Orchestra flow as the manager of a small team of agent roles. It classifies the request, interviews the user, dispatches the product manager and architect with pointers to files, has every artifact checked by an agent that did not produce it, and holds approval gates. Use when the user brings an idea to evaluate, asks for a PRD, an architecture or a task breakdown, asks to run or resume an Orchestra flow, or invokes orchestra:conductor. Not for one-off changes, questions about code, or small fixes a single agent can handle directly.
 ---
 
 # Conductor
@@ -17,7 +17,7 @@ A run goes well when it reaches the flow's last gate with every gate held, each 
 
 ## When to use this skill
 
-- The user wants to build a new product or start a project from an idea, with Orchestra or "the team".
+- The user has an idea to evaluate, requirements to write, or a system to architect, with Orchestra or "the team".
 - The user asks to run an Orchestra flow, or to resume one; a run folder under `.orchestra/` signals a run in progress.
 - The user invokes `orchestra:conductor`.
 
@@ -67,4 +67,8 @@ When the flow's last phase is approved or the user stops the flow, record the ou
 
 - `references/briefing-roles.md`: how to brief, resume and check a role, and what a report and a verdict contain. Read before the first dispatch.
 - `references/run-log.md`: the run log's shape. Read when you open or resume a run.
-- `references/flows/new-product.md`: the new-product flow, phase by phase, with each phase's exit criteria.
+- `references/flows/idea.md`: from an idea to a PR/FAQ and a go, park or drop decision.
+- `references/flows/requirements.md`: from source documents to a living PRD with a prioritized MVP.
+- `references/flows/architecture.md`: from selected requirements to an approved architecture and a task breakdown.
+
+Each flow file gives its phases and their exit criteria. A flow's output is the next flow's input: say so when one ends and offer the next, and let the user enter any flow with documents they already have.

@@ -2,29 +2,54 @@
 
 Part of the [Orchestra plan](README.md). The conductor picks a flow from the request's type, and each flow sets the ceremony that type needs. Roles are described in [Roles and craft skills](roles-and-skills.md); "the same instance" means the conductor resumes the agent from the earlier phase instead of starting a fresh one.
 
-## New product
+## Flows from idea to tasks
 
-This is the worked example, and the first flow to build.
+Three flows chain together, and context boundaries follow information rather than job titles (see [Roles and craft skills](roles-and-skills.md)). Each ends on a reviewed artifact that the next one takes as input, so the user can enter at any of them with documents already in hand: an idea, a PR/FAQ or other source documents, or a PRD with selected requirements. New products are rare and ideas are common, and an idea may end at the first flow. The same flows serve a new feature on an existing system.
+
+### Idea
+
+Question: is this idea worth building? The product manager carries one context throughout.
 
 | Phase | Who | Produces | Checkpoint |
 | --- | --- | --- | --- |
-| 1. Intake | conductor with the user | `brief.md`: problem, target user, why now, constraints, success signals, non-goals | Briefing, closing with an open "anything else to add?" question rather than a confirmation |
-| 2. Discovery | product manager (market and user lenses) | `research/market.md`, with sources and open questions | Peer check by a fresh product manager instance briefed as a critic |
-| 3. Findings | conductor with the user | updated brief; decisions in the run log | Briefing |
-| 4. Working backwards | the same product manager, judging feasibility itself and naming expensive or uncertain promises as risks | `docs/product/prfaq.md`, with the rough wireframes its format calls for | Peer check by the phase 2 critic, then review gate |
-| 5. Requirements | conductor with the user, then the same product manager | requirements section of the brief (load, responsiveness, availability, offline, accessibility, data, budget, hosting, stack); `docs/product/requirements.md` (functional requirements traced to PR/FAQ promises, non-functional requirements, MVP scope in and out, checkable success criteria, constraints) | Briefing; peer check by a fresh architect, as the next consumer, who continues into phase 6; review gate |
-| 6. Architecture and UX | the same architect, first researching the technology the requirements leave open, then setting out three options for every one-way-door decision, with prototype spikes where a question is risky; in parallel, when the product has a user interface, the same product manager designs the main journeys and wireframes for the MVP | `research/technical.md`, `docs/architecture.md`, `docs/adr/`, glossary; `docs/product/ux/` | Peer check by a reviewer (buildable, covers the requirements, consistent with the UX design); until the reviewer role exists in M3, a fresh architect instance briefed as a critic; then one review gate for both |
-| 7. Roadmap | the same architect | `plan.md` (MVP scope in and out, milestones, sequencing) plus features and stories with acceptance criteria and dependencies, created through `tasks` | Peer check by the product manager (the MVP keeps the PR/FAQ's most important promises), then review gate |
-| 8. Build | one engineer instance per ready story, each in its own worktree, breaking its story into tasks and carrying it through tests, code, refactoring and docs; one reviewer per change | merged code, tests and docs | Peer check by the reviewer per change; review gate per milestone with a demo and batched human checks |
-| 9. Acceptance | a reviewer runs the product against the acceptance criteria; the same product manager judges the result against the PR/FAQ and, for a user interface, the UX design | `acceptance.md` | Review gate; user accepts the MVP |
+| 1. Intake | conductor with the user | `brief.md`: problem, target user, why now, constraints, success signals, non-goals, whether the idea is novel | Briefing, closing with an open "anything else to add?" question |
+| 2. Market research and feasibility | product manager; one subagent finds the three major alternatives, one subagent per alternative studies it, and the product manager synthesizes common ground, gaps and missing features customers want; for a novel idea, the product manager then runs a feasibility check in the same context | `research/market.md`; `research/feasibility.md` for a novel idea | Peer check by a fresh product manager as a critic |
+| 3. Findings | conductor with the user | updated brief; decisions in the run log, including whether to go on | Briefing |
+| 4. Working backwards | the same product manager | `docs/product/prfaq.md`, with rough wireframes | Peer check by the phase 2 critic, then review gate; the user decides to go on, park or drop the idea |
 
-The flow works backward from the customer to the system: the product manager carries one context from market research through the PR/FAQ and the requirements to acceptance, and the architect joins once the requirements exist, carrying one context from checking them through technical research and the architecture to the roadmap. If either context fills before its work is done, the role writes a note to itself and the conductor continues from a fresh instance.
+### Requirements
 
-Phase 9 closes the loop: the PR/FAQ written in phase 4 becomes the yardstick for the finished MVP. Every run, in this flow and all the others, feeds the feedback ledger; the coach reads it later, outside the flow.
+Question: what exactly should be built first, how big is each piece, and how will we know it is done? The product manager carries one context from reading the sources to the UX design. It also runs for a new feature on an existing product.
+
+| Phase | Who | Produces | Checkpoint |
+| --- | --- | --- | --- |
+| 1. Intake | conductor with the user, from the questions the product manager asks first | requirements section of the brief: appetite, load, availability, offline, accessibility, data, budget, hosting, stack | Briefing |
+| 2. Requirements | product manager, sizing each requirement with the estimation skill (using the existing architecture doc if there is one) and checking feasibility where size is unknown; a spike subagent for a question that could move the cut line | `docs/product/prd.md`, a living document: goals and success measures; requirements, each with a stable ID, what, why, definition of done, customer value, effort and risk, status; non-functional requirements; ranking by value against ease; MVP cut line | Peer check by a fresh architect as the next consumer, then review gate where the user confirms the cut line and selects requirements |
+| 3. UX design (if there is a user interface) | the same product manager | `docs/product/ux/` for the selected requirements | Peer check by a fresh product manager as a critic, then review gate |
+
+The PRD is updated in place. Source documents (PR/FAQ, market research, other idea documents) are translated into it rather than duplicated.
+
+### Architecture
+
+Question: how do we build the selected requirements so the next ones fit? The architect carries one context and starts from the approved PRD and UX.
+
+| Phase | Who | Produces | Checkpoint |
+| --- | --- | --- | --- |
+| 1. Selection | conductor with the user | selected requirement IDs and technical constraints in the brief | Briefing, skipped when the PRD and the request settle both |
+| 2. Architecture | architect: technical research scoped to the open choices, then the design, checked against the existing architecture and the remaining requirements, three options for every one-way-door decision | `research/technical.md`, `docs/architecture.md`, `docs/adr/`, glossary | Peer check by a fresh architect as a critic that also tests the design against the approved UX (until the reviewer role exists), then review gate |
+| 3. Breakdown (M2) | the same architect | features and stories per selected requirement, with acceptance criteria from the definitions of done, dependency edges, sequence, through `tasks` | Peer check by the product manager, then review gate; can be reopened alone when scope changes |
+
+A selected requirement that proves too costly, conflicts with the existing design, or cannot deliver an approved journey sends the conductor back to the requirements flow for that requirement or the UX design only.
+
+### Build and acceptance (M3)
+
+Not yet designed in detail. One engineer instance per ready story, each in its own worktree, one reviewer per change, a review gate per milestone with a demo and batched human checks, then a reviewer runs the product against the acceptance criteria and the product manager judges the result against the PRD's definitions of done and the PR/FAQ.
+
+Every run, in this flow and all the others, feeds the feedback ledger; the coach reads it later, outside the flow.
 
 ## Other flows
 
-**New feature.** The architect maps the affected area, unless the architecture doc and glossary are current. The conductor briefs the user, the product manager writes a spec (a PR/FAQ only for large features), and the same architect writes a design note plus ADRs if the architecture changes, then breaks the feature into stories. A review gate follows, then the build and acceptance phases from the new-product flow. Anthropic's feature-dev plugin is the closest prior art for this flow.
+**New feature.** The architect maps the affected area first, unless the architecture doc and glossary are current. Then the requirements flow extends the PRD (the idea flow runs first only when the feature needs market research or a PR/FAQ, which only large features do), the architecture flow designs and breaks it down, and the build and acceptance phases follow. Anthropic's feature-dev plugin is the closest prior art for this flow.
 
 **Feature task.** One story or task inside a feature whose run is already under way. The conductor resumes that run's log and gives the work to an engineer, continuing the instance that owns the story if it is still current. One reviewer checks the change. There is no briefing or review gate unless the work hits an engineer stop condition or changes the plan; then it goes back to the architect.
 

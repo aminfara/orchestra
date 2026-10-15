@@ -1,6 +1,6 @@
 ---
 name: architecture
-description: Design a system's target architecture from a product brief and PR/FAQ, or describe an existing system's as-is architecture, as a short architecture doc, a domain glossary and architecture decision records (ADRs), setting out three options for every decision that is expensive to reverse and spiking risky questions with throwaway prototypes. Use when a product needs its architecture designed before it is built, when a codebase's architecture needs documenting, or when an architecture needs checking for whether it is buildable and covers its product's promises.
+description: Design a system's target architecture from selected requirements in a PRD (product requirements document), or describe an existing system's as-is architecture, as a short architecture doc, a domain glossary and architecture decision records (ADRs), setting out three options for every decision that is expensive to reverse and spiking risky questions with throwaway prototypes. Use when a product needs its architecture designed before it is built, when a codebase's architecture needs documenting, or when an architecture needs checking for whether it is buildable and covers its requirements.
 ---
 
 # Architecture
@@ -17,9 +17,9 @@ A good architecture lets an engineer start any story without asking how the part
 
 ## When to use this skill
 
-- A product needs its architecture designed before it is built, from a brief, a PR/FAQ and technical research.
+- A product needs its architecture designed before it is built, from selected requirements, the existing architecture if any, and technical research.
 - A codebase's architecture needs documenting as it is, with its glossary and its risks.
-- An architecture needs checking for whether it is buildable, covers its product's promises and agrees with its UX design.
+- An architecture needs checking for whether it is buildable, covers its requirements and can deliver its UX design.
 
 ### When NOT to use this skill
 
@@ -35,8 +35,9 @@ A good architecture lets an engineer start any story without asking how the part
 
 ## Inputs
 
-- **The brief**, including its technical section, the **PR/FAQ**, and the **technical research**.
-- **The UX design**, or the product manager's agent ID, when the product has a user interface.
+- **The selected requirements** in the PRD, the rest of the PRD, the brief with its technical section, and the **technical research**; the PR/FAQ if one exists.
+- **The existing architecture doc, glossary and ADRs**, if the system already exists.
+- **The approved UX design**, when the product has a user interface.
 - **For an as-is architecture**, the codebase and the areas to cover.
 
 ## Output
@@ -49,7 +50,7 @@ A good architecture lets an engineer start any story without asking how the part
 
 ### Step 1: Find the forces
 
-Read the brief, the PR/FAQ and the research. Write down the quality attributes that will shape the design (how many users, how fast, how available, offline or not, what data and how sensitive), and the product's hardest problems. These are what the design is judged against.
+Read the selected requirements, the brief, the existing architecture and the research. Write down the quality attributes that will shape the design (how many users, how fast, how available, offline or not, what data and how sensitive), and the product's hardest problems. These are what the design is judged against.
 
 ### Step 2: Sort the decisions
 
@@ -61,7 +62,7 @@ Where a decision rests on an assumption you cannot confirm from documentation, s
 
 ### Step 4: Write the docs
 
-Write the architecture doc, the glossary and the ADRs. Trace each MVP promise in the PR/FAQ to the parts that deliver it, and agree terms and constraints with the product manager when a UX design is being made in parallel. Before you report, read the architecture doc as an engineer about to start work would, and fill each gap that would force a question.
+Write the architecture doc, the glossary and the ADRs. Trace each selected requirement to the parts that deliver it, check the design against the PRD's remaining requirements and note where it would have to change to carry them, so the next feature extends the system instead of reworking it, and use the glossary's terms from the approved UX design. If the design cannot deliver a journey, report it as a finding instead of changing the UX. Before you report, read the architecture doc as an engineer about to start work would, and fill each gap that would force a question.
 
 ## Reference files
 
