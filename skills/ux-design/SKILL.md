@@ -1,15 +1,15 @@
 ---
 name: ux-design
-description: Design the user experience of a product's MVP from its approved PR/FAQ, as user journeys, an information architecture and low-fidelity wireframes, with simple clickable HTML prototypes where a journey's feel is uncertain, held to usability and accessibility bars. Use when a product with a user interface needs its main journeys and screens designed before it is built, or when an existing UX design needs checking against its PR/FAQ or architecture.
+description: Design the user experience of a product's MVP from its selected requirements in the PRD (and its PR/FAQ, if one exists), as user journeys, an information architecture and low-fidelity wireframes, with simple clickable HTML prototypes where a journey's feel is uncertain, held to usability and accessibility bars. Use when a product with a user interface needs its main journeys and screens designed before it is built, or when an existing UX design needs checking against its requirements or architecture.
 ---
 
 # UX Design
 
-Design how the MVP's main journeys work for the customer, from the promises in an approved PR/FAQ.
+Design how the MVP's main journeys work for the customer, from the selected requirements and the promises behind them.
 
 ## Overview
 
-This skill designs the user experience of a product's MVP. It turns the promises in an approved PR/FAQ into the journeys a customer takes, the places in the product where those journeys happen, and low-fidelity wireframes of the screens that matter. Where a journey's feel is uncertain, it adds a simple clickable prototype in plain HTML.
+This skill designs the user experience of a product's MVP. It turns the selected requirements, and the PR/FAQ's promises where one exists, into the journeys a customer takes, the places in the product where those journeys happen, and low-fidelity wireframes of the screens that matter. Where a journey's feel is uncertain, it adds a simple clickable prototype in plain HTML.
 
 The PR/FAQ's own wireframes are rough by design: they show the customer experience well enough to judge the idea. Before anyone builds, the team needs more than that. It needs to know what the customer does first, what they see when there is nothing there yet, how they recover from a mistake, and how each promise becomes a path through real screens. Designing that from the customer's view, in the same context that wrote the PR/FAQ, keeps the design faithful to the promises rather than re-derived from them.
 
@@ -17,13 +17,13 @@ A good UX design lets an engineer build the screens without asking what goes whe
 
 ## When to use this skill
 
-- A product with a user interface has an approved PR/FAQ, and its MVP needs its journeys and screens designed before it is built.
+- A product with a user interface has approved requirements, and its MVP needs its journeys and screens designed before it is built.
 - An existing UX design needs checking against its PR/FAQ, against the architecture, or against the usability and accessibility bars.
 
 ### When NOT to use this skill
 
 - The product has no user interface, such as a library or an API. The PR/FAQ and architecture cover it.
-- The PR/FAQ is not approved yet. Its rough wireframes are enough until it is.
+- The requirements are not approved yet. The PR/FAQ's rough wireframes are enough until they are.
 - Visual design: colours, typography, brand. This skill stops at structure and behaviour.
 
 ## Constraints
