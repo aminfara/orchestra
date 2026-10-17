@@ -53,6 +53,6 @@ Orchestra writes two kinds of files into a target project. Living docs describe 
 
 Per-run artifacts belong to one run of one flow and sit in a hidden folder, `.orchestra/<yyyy-mm-dd>-<flow>-<slug>/`, holding `log.md`, `brief.md`, `research/`, `plan.md` and `acceptance.md`. Tasks live behind the [`tasks` interface](tasks.md) rather than in `plan.md`. `.orchestra/config.toml` is always committed; whether run folders are committed is decided after the first dogfood run.
 
-When the conductor closes a run, it records the outcome and tells you how many new findings the feedback ledger holds since the last retro, so you can decide when to run the coach. It does not run the coach itself.
+When the conductor closes a run, it records the outcome with `feedback.py close-run`, which returns the ledger's signals, and tells you in a sentence when the coach has something to act on. It does not run the coach itself.
 
 The run log records the flow and why it was chosen, each phase's status, gate decisions with dates, artifact paths, rulings, open questions, and deviations from the flow with their reasons. It is the conductor's memory across sessions. Standing project context stays in the repo's existing CLAUDE.md or AGENTS.md; Orchestra does not add a constitution file.

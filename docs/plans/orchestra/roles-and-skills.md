@@ -18,9 +18,9 @@ Orchestra has four team roles, which work inside the delivery loop, and a coach,
 | --- | --- | --- | --- | --- |
 | product manager | The voice of the customer: what to build and why, how it should feel to use, and whether the result keeps the PR/FAQ's promises | research (market and user lenses), feasibility, estimation, writing-studio (PR/FAQ, PRD), ux-design (when the product has a user interface), verification (acceptance from the customer's side) | Opus, high | Writes docs and wireframes only; web access |
 | architect | The whole system: how to build it, in what order, and what is expensive to change later | research (technical lens), architecture (target and as-is), planning (features, stories, roadmap), tasks | Opus, high | Writes docs and stories only; web access |
-| engineer | One story, end to end | planning (story into tasks), tdd-programming, debugging, tasks, writing-studio (docs) | Sonnet, medium | `isolation: worktree` |
-| reviewer | Another engineer's change, judged without the author's claims | review (quality, function, security and performance lenses), verification, debugging, feedback | Opus, high | Read-only, except running tests and the product |
-| coach | Orchestra itself over many runs | feedback, skill-creator | Opus, high | Its own session, outside any flow; writes proposals only |
+| engineer | One story or defect, end to end, including diagnosing it and integrating it | planning (story into tasks), tdd-programming, debugging, tasks, writing-studio (docs) | Sonnet, medium | `isolation: worktree` |
+| reviewer | Another engineer's change, or the built product at acceptance, judged without the author's claims | review (quality, function, security and performance lenses), verification, debugging, feedback | Opus, high | `isolation: worktree`; writes only its verdict and acceptance documents |
+| coach | Orchestra itself over many runs | coach (its entry point), feedback, skill-creator | Session model | Its own session, outside any flow; writes proposals, and lands only what you approve |
 
 The conductor, which runs in the main session, is the team's engineering manager. The coach is not part of the team and not part of the software development lifecycle. Its view is how the team works across many runs, not any one product, so mixing it into a flow would put the wrong view in the wrong context. The coach is therefore a skill with its own entry point rather than a subagent the conductor dispatches: you start it in a separate session, it reads only the feedback ledger, and it presents its proposals to you directly. It can spawn its own subagents for eval runs and removal trials. It never reads a run's artifacts, talks to a team role, or touches a run in progress. See [Feedback loop](feedback-loop.md).
 
@@ -56,7 +56,8 @@ Skills are what a role knows how to do; a role composes several. A role loads ea
 | debugging | engineer, reviewer | A failing feedback loop before hypotheses, recording behavior that must not change, escalating after repeated failed fixes |
 | review | reviewer | Reviewing without the author's claims; quality, function, security and performance lenses, used as the change's risk calls for; triage of findings |
 | ux-design | product manager | User journeys, information architecture, wireframes and simple clickable prototypes for the MVP, with usability and accessibility as quality bars; used only when the product has a user interface, and only after the PR/FAQ is approved, because the PR/FAQ's own wireframes stay rough by design |
-| verification | reviewer, product manager | Working backward from the goal; evidence from commands run fresh, not from reports |
+| verification | reviewer, product manager | Working backward from the goal; evidence from commands run fresh, not from reports; acceptance through the product's real entry points |
 | tasks | architect, engineer, conductor | The [`tasks` interface](tasks.md) and when to use each operation |
-| feedback | reviewer, coach | Recording findings, and how the coach turns them into concepts ([feedback loop](feedback-loop.md)) |
+| feedback | every checker | Recording findings and returning a verdict; the ledger script also computes the coach's signals ([feedback loop](feedback-loop.md)) |
+| coach | the coach | Reading signals and findings across ledgers, deciding where each fix belongs, trials, evaluating landed changes, and recording decisions |
 | writing-studio | product manager, engineer | Existing; PR/FAQ, specs and other human-facing docs |

@@ -8,10 +8,22 @@ How the conductor hands work to a role, continues it, and has it checked.
 | --- | --- | --- | --- |
 | product manager | `orchestra:product-manager` | opus, high | The customer: what to build and why, and how it should feel to use |
 | architect | `orchestra:architect` | opus, high | The whole system: how to build it, and what is expensive to change later |
+| engineer | `orchestra:engineer` | sonnet, medium, own worktree | One story or defect, end to end |
+| reviewer | `orchestra:reviewer` | opus, high, own worktree | Someone else's change, or the built product at acceptance |
 
 A role is a definition; an instance is one running agent with its own context. Each spawn returns an agent ID. Record it in the run log, because it is how you resume the instance. The model and effort come from the agent file; the ledger records them against each finding.
 
 The run ID is the run folder's name, such as `2026-10-14-idea-todo`. Every brief that may lead to a ledger record carries it.
+
+## Project settings
+
+Read `<root>/.orchestra/config.toml` when you open a run; it is short. Three tables change how you dispatch, and the coach proposes changes to them as trials the user approves:
+
+- `[models]`, such as `engineer = "opus"`: pass that model when you spawn the role, instead of the agent file's default.
+- `[review]`, such as `engineer = "sample"`: review every second change by that role, plus every change whose report lists rulings, concerns or a stop condition, instead of every change (`"all"`, the default). Note each skipped review in the run log. Problems that then reach acceptance or the user are what tells the coach to restore full review.
+- `[build]`, such as `parallel = 2`: how many engineers may work at once in the build flow (default 3).
+
+The `[tasks]` table belongs to the task store and `[coach]` to the ledger's signals; you do not need them.
 
 ## A brief
 
@@ -25,7 +37,7 @@ Write each brief with these parts, in plain prose or short labelled lines:
 - **Quality bar.** The phase's exit criteria from the flow file, as written there.
 - **Skill.** The craft skill to use for this activity, by its full name (for example `orchestra:research`).
 - **Out of scope.** What this role should leave alone, usually the next phase's work.
-- **Peers.** Only when the flow calls for it: the agent IDs of roles this one may message directly, and what to ask each about. The idea, requirements and architecture flows name none.
+- **Peers.** Only when the flow calls for it: the agent IDs of roles this one may message directly, and what to ask each about. Most flows name none; an engineer may be given the architect's ID for questions about an interface only the architect can answer.
 - **Report.** The path to write the report to, under the run folder's `reports/`, named `<phase>-<role>-<activity>.md`.
 - **Ledger.** The ledger path, run ID, flow and phase, so the role can record findings when it checks or when the user's comments reach it.
 
@@ -39,7 +51,7 @@ Start a fresh instance when the work is independent of what the instance did, or
 
 Run instances in the background when they can work in parallel, and wait for each to finish before you use its result. Prefer files over chat between instances. If a flow does let two parallel instances talk, spawn the first, spawn the second with the first's agent ID in its brief, then send the first the second's ID. Messaging a running instance is untested; if it fails, the two compare notes through each other's files at the peer check.
 
-When a phase closes, record its cost for each role that worked in it: `python3 ${CLAUDE_PLUGIN_ROOT}/skills/feedback/scripts/feedback.py cost --ledger <ledger> --run <run> --phase <n> --role <role> --rounds <revisions> --tokens <tokens>`, with the tokens from the agents' completion notices where they show them.
+When a phase closes, record its cost for each role that worked in it: `python3 ${CLAUDE_PLUGIN_ROOT}/skills/feedback/scripts/feedback.py cost --ledger <ledger> --run <run> --phase <n> --role <role> --rounds <revisions>`. Tokens are recorded for you: a hook writes each Orchestra agent's token use to the ledger when it stops.
 
 ## A report
 
@@ -51,6 +63,8 @@ Every role ends with a report, written to the path in its brief and returned as 
 - **Rulings:** decisions the role made on its own, each with what it costs if wrong.
 - **Questions for the user:** decisions only the user can make, each with the role's recommendation.
 - **Risks and assumptions:** what the next role or the user should know.
+
+Every final message a role sends you starts with its status line (or, for a checker, its verdict line), including a digest or an answer to a question. A hook sends a role back once if it stops without one, or if its verdict cites ledger IDs it never recorded, so you may see a role take one extra turn.
 
 Copy the status and summary into the run log, carry the questions to the next briefing, and let the rest go. If a report runs past a few hundred words, ask the role to shorten it rather than reading on.
 

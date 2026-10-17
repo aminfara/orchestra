@@ -1,6 +1,6 @@
 # Orchestra plan
 
-A Claude Code plugin that runs a team of agents through software engineering flows. Draft, 2026-10-14; the decisions below were made with Ali the same day.
+A Claude Code plugin that runs a team of agents through software engineering flows. Draft, 2026-10-14, with the decisions made with Ali that day; updated 2026-10-18 when M2 to M5 were built.
 
 ## Summary
 
@@ -8,7 +8,7 @@ Orchestra has four layers. A `conductor` skill runs in the main session and owns
 
 The conductor acts as the team's manager. It knows the state of the flow and who is doing what, and it reads short reports, never the artifacts or the code. When it needs to know whether work is good, it asks another agent to check. Every context window stays scoped to one job, which is the reason to use subagents at all.
 
-Orchestra runs two loops. The delivery loop is the software development lifecycle: the conductor and the four team roles run a flow and ship the work, and every check, review and user gate along the way records its findings in a feedback ledger. The improvement loop sits outside it: a coach, started in its own session with its own entry point, reads the ledger across many runs and proposes changes to how the team works. It turns recurring findings into better concepts in the skills, into tools, or into project docs, never into one rule per finding, and proposes lighter review and cheaper models where a role has earned trust. The coach never joins a flow, never talks to a role, and never changes anything mid-run. You approve each of its changes, and the following runs show whether it helped.
+Orchestra runs two loops. The delivery loop is the software development lifecycle: the conductor and the four team roles run a flow and ship the work, and every check, review and user gate along the way records its findings in a feedback ledger. The improvement loop sits outside it: a coach, started in its own session with its own entry point, reads the ledger across many runs and proposes changes to how the team works. Deterministic signals computed from the ledger, surfaced by the conductor at the end of a run and by a hook when a session starts, tell you when the coach has something to act on. It turns recurring findings into better concepts in the skills, into tools, or into project docs, never into one rule per finding, and proposes lighter review and cheaper models where a role has earned trust. The coach never joins a flow, never talks to a role, and never changes anything mid-run. You approve each of its changes, and the following runs show whether it helped.
 
 The craft skills are Orchestra's own. A survey of ten frameworks (Superpowers, GSD, Addy Osmani's agent-skills, Matt Pocock's skills and six others) found good ideas in each, found that almost all are written as rigid procedures, and found that none publishes evidence that its multi-agent loop beats a single agent. Orchestra borrows the ideas, writes them as concepts and quality bars, and measures itself against a single-agent baseline from the first milestone.
 
@@ -49,34 +49,39 @@ Each note covers one part and can be read on its own.
 ```text
 orchestra/                         plugin root (this repo)
   .claude-plugin/plugin.json
+  agents/                          product-manager, architect, engineer, reviewer
+  hooks/
+    hooks.json                     SessionStart and SubagentStop hooks
+    orchestra_hooks.py             signals nudge, ledger registry, report and ledger guard
   skills/
     conductor/                     entry point for the delivery loop
       SKILL.md                     classify the request, pick a flow, run its phases, hold the gates
       references/
-        briefing-roles.md          how to brief a role and what a report looks like
+        briefing-roles.md          how to brief a role, project settings, reports and verdicts
         run-log.md                 shape of the run log
-        flows/                     one file per flow
+        flows/                     one file per flow (ten)
     coach/                         entry point for the improvement loop; runs in its own session
     briefing/  research/  feasibility/  estimation/  ux-design/  architecture/
-    planning/  tdd-programming/
-    review/  verification/  debugging/  tasks/  feedback/
+    planning/  tasks/  tdd-programming/  debugging/
+    review/  verification/  feedback/
     writing-studio/                existing; PR/FAQ and other human-facing docs
     skill-linter/                  existing
-  agents/                          one file per team role
 ```
 
 The repo already keeps skills under `skills/`, which is the plugin layout. Turning it into a plugin means adding `.claude-plugin/plugin.json` and an `agents/` folder ([plugin components docs](https://code.claude.com/docs/en/plugins/components.md)).
 
 ## Build plan
 
-| Milestone | Scope | Done when |
-| --- | --- | --- |
-| M0 (done) | Prior-art survey and your review of the decision table | Done 2026-10-14; five rows revised from your answers |
-| M1 | Plugin manifest; conductor with its references; idea, requirements and architecture flows up to the approved architecture; product manager and architect roles, with instances resumed across phases; briefing, research, feasibility, estimation, ux-design and architecture skills; the feedback skill and ledger, with checkers recording from the first run; five spikes, run first (see below) | One dogfood run on the collaborative todo app reaches an approved architecture, every gate holds, the conductor never opens an artifact, a reader who was not in the session can follow each artifact, the artifacts compare favorably with a single-agent baseline on the same idea, and a coach retro run by hand turns the ledger into proposals you can judge |
-| M2 | The architecture flow's breakdown phase, the planning skill, the breakdown gate, and the `tasks` script with the Git adapter, tested with parallel claims from two worktrees and two machines | The breakdown from the M1 run contains stories an engineer could start without asking a question |
-| M3 | Engineer and reviewer roles; tdd-programming, review and verification skills; acceptance; worktree isolation; merge order; the coach skill as its own entry point, with its first review-sampling and model trials | The M1 idea's MVP is built and passes acceptance |
-| M4 | New-feature, feature-task, bug-fix and troubleshoot flows; debugging skill | Each flow completes on the product built in M3 |
-| M5 | Understand and rewrite flows, with architect instances mapping a codebase in parallel | The understand flow produces a usable map of an existing open-source codebase |
+| Milestone | Scope | Done when | Status |
+| --- | --- | --- | --- |
+| M0 | Prior-art survey and your review of the decision table | Done 2026-10-14; five rows revised from your answers | Done |
+| M1 | Plugin manifest; conductor with its references; idea, requirements and architecture flows up to the approved architecture; product manager and architect roles, with instances resumed across phases; briefing, research, feasibility, estimation, ux-design and architecture skills; the feedback skill and ledger, with checkers recording from the first run; five spikes, run first (see below) | One dogfood run on the collaborative todo app reaches an approved architecture, every gate holds, the conductor never opens an artifact, a reader who was not in the session can follow each artifact, the artifacts compare favorably with a single-agent baseline on the same idea, and a coach retro run by hand turns the ledger into proposals you can judge | Done, per Ali, 2026-10-18 |
+| M2 | The architecture flow's breakdown phase, the planning skill, the breakdown gate, and the `tasks` script with the Git adapter, tested with parallel claims from two worktrees and two machines | The breakdown from the M1 run contains stories an engineer could start without asking a question | Built 2026-10-18; parallel claims pass in tests (two worktrees, and two clones of one remote standing in for two machines); the breakdown criterion needs a dogfood run |
+| M3 | Engineer and reviewer roles; tdd-programming, review and verification skills; the build flow with acceptance; worktree isolation; integration order; the coach skill as its own entry point, with its signals, hooks and trials | The M1 idea's MVP is built and passes acceptance | Built 2026-10-18; needs a dogfood run |
+| M4 | New-feature, feature-task, bug-fix and troubleshoot flows; debugging skill | Each flow completes on the product built in M3 | Built 2026-10-18; needs dogfood runs |
+| M5 | Understand and rewrite flows, with architect instances mapping a codebase in parallel | The understand flow produces a usable map of an existing open-source codebase | Built 2026-10-18; needs a dogfood run |
+
+"Built" means the skills, agents, flows, scripts and hooks exist, every SKILL.md passes skill-linter, and the scripts' tests pass. Each milestone's done-when criterion still needs its dogfood run, and those runs feed the coach its first real ledger.
 
 M3 carries the most risk, because it is the first milestone where agents change code in parallel. Matt Pocock's upstream `implement-spec` skill (parallel implementers, one worktree per ticket, a merger subagent on an integration branch) is the prior art to study before starting it.
 
@@ -88,7 +93,7 @@ M1 starts with five throwaway tests of Claude Code behaviour the design depends 
 2. **Forked briefings: failed.** The overseer session ran two throwaway skills marked `context: fork` on 2026-10-14, one with `background: false` and one in the background. Neither had AskUserQuestion in its tool list or among its deferred tools, so neither could ask a question. The sub-agents docs' remark that forks keep the main session's tools applies to forking the conversation, not to a skill's `context: fork`. Briefings therefore run in the main session, from the roles' reports.
 3. **Agents talking to each other: passed with plain subagents.** One background subagent sent a message to a finished sibling by its agent ID; the send resumed the sibling, which reported the exact text. Subagents have SendMessage but not ListAgents, so a role can only message an agent whose ID is in its brief. Agent teams are not needed for this.
 4. **Nesting from a background agent: passed.** A background subagent spawned a nested foreground subagent, which replied as asked. The GSD notes' claim does not hold here. The background subagent also lacked AskUserQuestion, as the docs say.
-5. **Loading the plugin locally: `--plugin-dir`, in a CLI session.** The docs say `--plugin-dir` and `/reload-plugins` are documented for the CLI but not for the desktop app, and that a local-path marketplace loads its plugin in place, with edits applied at the next session start or after `/reload-plugins` ([plugin loading docs](https://code.claude.com/docs/en/plugins/loading.md)). On 2026-10-14 the overseer found that this machine's managed settings block local directory marketplaces, so `claude plugin marketplace add` fails. `claude --plugin-dir <main checkout>` works: a headless session listed both agents and the craft skills under the `orchestra:` prefix, and a plugin agent loaded `orchestra:feedback` with the Skill tool. A skill that is also installed under the same path as a personal skill (writing-studio and skill-linter are symlinked into `~/.claude/skills/`) loads once, under its personal name without the prefix, so briefs name it `writing-studio`. The dogfood session therefore runs as a CLI session started with `--plugin-dir`, and picks up merged changes at its next start or `/reload-plugins`; the dogfood run confirms `/reload-plugins` the first time a change lands.
+5. **Loading the plugin locally: `--plugin-dir`, in a CLI session.** The docs say `--plugin-dir` and `/reload-plugins` are documented for the CLI but not for the desktop app, and that a local-path marketplace loads its plugin in place, with edits applied at the next session start or after `/reload-plugins` ([plugin loading docs](https://code.claude.com/docs/en/plugins/loading.md)). On 2026-10-14 the overseer found that this machine's managed settings block local directory marketplaces, so `claude plugin marketplace add` fails. `claude --plugin-dir <main checkout>` works: a headless session listed both agents and the craft skills under the `orchestra:` prefix, and a plugin agent loaded `orchestra:feedback` with the Skill tool. A skill that is also installed under the same path as a personal skill (writing-studio and skill-linter are symlinked into `~/.claude/skills/`) loads once, under its personal name without the prefix, so briefs named it `writing-studio`. By 2026-10-18 the symlinks were gone and a headless session listed it as `orchestra:writing-studio`, so briefs and agents now use the prefixed name. The dogfood session therefore runs as a CLI session started with `--plugin-dir`, and picks up merged changes at its next start or `/reload-plugins`; the dogfood run confirms `/reload-plugins` the first time a change lands.
 
 ### Dogfooding
 
@@ -138,6 +143,16 @@ Made on 2026-10-14:
 - **Context boundaries follow information, not roles (2026-10-15):** the product manager researches, checks feasibility, sizes requirements with the estimation skill, writes the PRD and designs the UX, all in one context, because each step needs what the last found. The architect starts from the approved PRD and UX and does technical research, architecture and breakdown. There is one handoff. Estimation is a coarse ranking skill that uses the existing architecture doc when there is one; feasibility is a paper check with a smallest-experiment proposal. A requirement that cannot be sized on paper goes to a spike subagent with one question. UX moves from a parallel architecture-flow phase to the end of the requirements flow, so the two roles no longer negotiate.
 - **Feedback loop:** a core part of Orchestra from M1. It turns recurring findings into concepts, tools or project notes, never one rule per finding, so the team gets better and cheaper without losing focus.
 
+Made on 2026-10-18 while building M2 to M5, as rulings you can reverse:
+
+- **Running the product for acceptance:** the reviewer verifies through the product's real entry points, using a browser automation tool when one is available and the project's end-to-end tests otherwise, and lists what only a person can check for the milestone gate. This answers the M1 open question.
+- **Integration:** each build has an integration branch, `orchestra/build/<run>`, that nobody checks out. After its review passes, the engineer who owns a story rebases it onto that branch, reruns the suite and fast-forwards the branch with `git push . HEAD:<branch>`, which Git refuses if the branch moved, so integrations are serialized without a merger agent. The engineer resolves conflicts because it knows the change. Merging into your branch, or opening a pull request, is your call at the last milestone gate.
+- **Architecture check stays with an architect:** the plan said the reviewer would take over the architecture flow's peer check once it existed. Judging a design needs the whole-system view, so a fresh architect keeps that check, and the reviewer judges code.
+- **Troubleshooting stays in one context:** the plan had the engineer consult the architect when a cause might lie between components. The engineer reads the architecture doc itself instead, and a diagnosis that implies a design change comes back as "needs a decision". This avoids a role handoff in the middle of an investigation.
+- **Coach triggers and self-correction:** deterministic signals in the ledger script, surfaced at run close and by a session-start hook as a message to you, not to the agent; a subagent-stop hook that keeps the ledger complete; proposals and decisions as ledger events; savings trials as project settings that the ledger watches and flags for restore. See [Feedback loop](feedback-loop.md).
+- **Review intensity and models per project:** `[review]` and `[models]` in `.orchestra/config.toml`, read by the conductor at dispatch, so a trial in one project does not change another, and is undone by deleting a line.
+
 ## Open questions
 
-1. **Running the product for acceptance.** The reviewer needs a way to run and drive the product (the built-in run skill, a browser tool, or test scripts only). This can wait until M3.
+1. **Single-agent baseline for the build.** M1 compared artifacts with a single agent. No comparison yet exists for the build flow, where the evidence says multi-agent setups most often lose (see the [multi-agent frameworks note](../../research/prior-art/multi-agent-frameworks.md)). The first M3 dogfood run should build one milestone twice, once with the build flow and once with one agent and the same skills, before parallel engineers become the default.
+2. **Hook behaviour in a long run.** A headless session on 2026-10-18 confirmed the hooks with the plugin loaded by `--plugin-dir`: the session-start hook showed its one-line message for a ledger with a due signal; the subagent-stop hook saw the reviewer as `orchestra:reviewer`, sent back a bare reply once and got a verdict on the second stop, and recorded each stop with its token count from the transcript. Untested: a report handed back through the `SubagentHandback` tool, and how often the send-back fires in a real flow, which the ledger's agent events will show.

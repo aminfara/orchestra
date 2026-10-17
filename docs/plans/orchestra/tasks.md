@@ -6,6 +6,8 @@ Part of the [Orchestra plan](README.md). One task interface for every role, with
 
 Teams track work in different systems (Jira, GitHub Issues, Linear, or nothing beyond the repo), and Orchestra should not care which. Roles never call a tracker directly. They call one small command-line script, `tasks`, which exposes the handful of operations Orchestra needs and passes them to an adapter for the system the project has chosen. The interface is defined by what the roles consume, not by what any tracker offers.
 
+The MVP has nine operations: the six the roles need most, and three that came up while building it.
+
 | Operation | Who calls it | What it does |
 | --- | --- | --- |
 | `create` | architect, engineer | The architect adds features and stories with acceptance criteria, blocking edges and a milestone; an engineer adds tasks under its story |
@@ -14,8 +16,11 @@ Teams track work in different systems (Jira, GitHub Issues, Linear, or nothing b
 | `show` | engineer, reviewer | Returns one task, including its acceptance criteria |
 | `note` | engineer | Appends a progress note or a ruling |
 | `close` | engineer | Marks the task done, with a link to the change |
+| `release` | engineer | Gives a claim back when the engineer stops without finishing |
+| `edit` | architect | Changes a story's title, criteria, edges or milestone, or drops it, when scope changes |
+| `list` | conductor, checkers | A compact overview, filtered by kind, status or milestone |
 
-Every operation returns short JSON, so reading task state costs the conductor a few lines of context rather than a tracker's full payload. Errors are specific (`AlreadyClaimed`, `UnknownTask`, `BackendUnavailable`) so a role can react to the error instead of parsing prose. A project chooses its adapter in `.orchestra/config.toml`, which the setup step writes once.
+Every operation returns short JSON, so reading task state costs the conductor a few lines of context rather than a tracker's full payload. Errors are specific (`AlreadyClaimed`, `Blocked`, `UnknownTask`, `InvalidState`, `BackendUnavailable`) so a role can react to the error instead of parsing prose. A project chooses its adapter in `.orchestra/config.toml`, which the setup step writes once.
 
 `plan.md` keeps only what a task list cannot hold: MVP scope in and out, milestones, and the reasoning behind the sequence.
 
@@ -33,4 +38,4 @@ GitHub Issues through `gh`, Jira through its REST API or command-line client, an
 
 ## Implementation
 
-The script lives in its own skill, `skills/tasks/`, whose SKILL.md tells roles which operation to use when. It is written in Python with the standard library only, like skill-linter, so it runs anywhere Python 3 does. Matt Pocock's setup skill solves the same problem with prose instructions per tracker in `docs/agents/issue-tracker.md`. A script with a fixed interface costs fewer tokens per call and behaves the same way every time.
+The script lives in its own skill, `skills/tasks/`, whose SKILL.md tells roles which operation to use when. Built 2026-10-18: each task is a Markdown file with a JSON-valued header on the `orchestra/tasks` branch, written with `hash-object`, a temporary index, `commit-tree` and `update-ref <new> <old>`, so a write that loses a race fails cleanly and the script reloads and retries. With a remote configured, the compare-and-swap is a non-forced push. The tests run concurrent claims from two worktrees, concurrent creates, and claims from two clones of one bare remote. It is written in Python with the standard library only, like skill-linter, so it runs anywhere Python 3 does. Matt Pocock's setup skill solves the same problem with prose instructions per tracker in `docs/agents/issue-tracker.md`. A script with a fixed interface costs fewer tokens per call and behaves the same way every time.

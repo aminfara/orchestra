@@ -1,6 +1,6 @@
 ---
 name: conductor
-description: Run an Orchestra flow as the manager of a small team of agent roles. It classifies the request, interviews the user, dispatches the product manager and architect with pointers to files, has every artifact checked by an agent that did not produce it, and holds approval gates. Use when the user brings an idea to evaluate, asks for a PRD, an architecture or a task breakdown, asks to run or resume an Orchestra flow, or invokes orchestra:conductor. Not for one-off changes, questions about code, or small fixes a single agent can handle directly.
+description: Run an Orchestra flow as the manager of a small team of agent roles (product manager, architect, engineer, reviewer). It classifies the request into a flow, interviews the user, dispatches roles with pointers to files, has every artifact and change checked by an agent that did not write it, and holds approval gates. Use when the user brings an idea to judge, asks for a PRD, an architecture, a breakdown or its implementation, wants a feature added, a bug fixed or a problem troubleshot with the team, wants an existing codebase mapped or rewritten, asks to run or resume an Orchestra flow, or invokes orchestra:conductor. Not for one-off changes, questions about code, or small fixes a single agent can handle directly.
 ---
 
 # Conductor
@@ -17,18 +17,18 @@ A run goes well when it reaches the flow's last gate with every gate held, each 
 
 ## When to use this skill
 
-- The user has an idea to evaluate, requirements to write, or a system to architect, with Orchestra or "the team".
+- The user has an idea to evaluate, requirements to write, a system to architect or build, a feature to add, a bug to fix, a symptom to troubleshoot, or a codebase to understand or rewrite, with Orchestra or "the team".
 - The user asks to run an Orchestra flow, or to resume one; a run folder under `.orchestra/` signals a run in progress.
 - The user invokes `orchestra:conductor`.
 
 ### When NOT to use this skill
 
 - One-off edits, questions about code, and small fixes. Do them directly; a flow costs more than it saves.
-- Request types whose flow file does not exist yet under `references/flows/`. Say which flows exist, and offer to work directly instead.
+- Improving Orchestra itself from its feedback ledger. That is `orchestra:coach`, in its own session.
 
 ## Constraints
 
-- **You manage; you do not do the work.** You write the brief and the run log, and you read reports and verdicts. You do not open artifacts, research, design or write code. When you need to know whether work is good, ask an agent that did not write it.
+- **You manage; you do not do the work.** You write the brief and the run log, read reports, verdicts and the task store's JSON, and run the Git commands that manage a run's branches. You do not open artifacts, research, design or write code. When you need to know whether work is good, ask an agent that did not write it.
 - **Only the user passes a review gate.** Forward the user's comments to the author word for word, and start no downstream phase until the user approves.
 - **You are the only one who talks to the user.** Roles have no AskUserQuestion tool, so their questions come to you in reports, and you ask them through the briefing skill.
 - **Adapt the flow in the open.** You may skip a phase whose artifact is current, merge small phases or run independent ones in parallel; record each deviation and its reason in the run log.
@@ -61,14 +61,22 @@ After each phase, update the run log with the phase's status, the report summari
 
 ### Step 3: Close the run
 
-When the flow's last phase is approved or the user stops the flow, record the outcome in the run log. Run `python3 ${CLAUDE_PLUGIN_ROOT}/skills/feedback/scripts/feedback.py count --ledger <root>/.orchestra/feedback.jsonl` and tell the user how many findings the ledger holds since the last retro, so they can decide when to run the coach. Do not run a retro yourself.
+When the flow's last phase is approved or the user stops the flow, record the outcome in the run log. Then run `python3 ${CLAUDE_PLUGIN_ROOT}/skills/feedback/scripts/feedback.py close-run --ledger <root>/.orchestra/feedback.jsonl --run <run ID> --flow <flow> --outcome <complete, stopped, parked or dropped>`. It records the run and returns the ledger's signals. If any are due, tell the user in a sentence or two what they are and that `orchestra:coach`, started in a separate session, acts on them. Do not run a retro yourself, and do not act on a signal mid-flow.
 
 ## Reference files
 
 - `references/briefing-roles.md`: how to brief, resume and check a role, and what a report and a verdict contain. Read before the first dispatch.
 - `references/run-log.md`: the run log's shape. Read when you open or resume a run.
-- `references/flows/idea.md`: from an idea to a PR/FAQ and a go, park or drop decision.
-- `references/flows/requirements.md`: from source documents to a living PRD with a prioritized MVP.
-- `references/flows/architecture.md`: from selected requirements to an approved architecture and a task breakdown.
+- `references/flows/`: one file per flow. Read only the one you chose.
+  - `references/flows/idea.md`: from an idea to a PR/FAQ and a go, park or drop decision.
+  - `references/flows/requirements.md`: from source documents to a living PRD with a prioritized MVP and its UX.
+  - `references/flows/architecture.md`: from selected requirements to an approved architecture and a breakdown into stories.
+  - `references/flows/build.md`: from a breakdown to integrated, reviewed and accepted milestones.
+  - `references/flows/feature-task.md`: one story inside a build that is under way.
+  - `references/flows/new-feature.md`: a feature on an existing product, chaining the flows above.
+  - `references/flows/bug-fix.md`: from a known defect to a reviewed fix with a regression test.
+  - `references/flows/troubleshoot.md`: from a symptom to a diagnosis, changing no code.
+  - `references/flows/understand.md`: from a codebase to an as-is architecture, glossary and risk map.
+  - `references/flows/rewrite.md`: from an existing system to a replacement that keeps its must-stay behaviour.
 
 Each flow file gives its phases and their exit criteria. A flow's output is the next flow's input: say so when one ends and offer the next, and let the user enter any flow with documents they already have.

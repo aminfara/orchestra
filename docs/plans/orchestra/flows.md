@@ -41,13 +41,23 @@ Question: how do we build the selected requirements so the next ones fit? The ar
 
 A selected requirement that proves too costly, conflicts with the existing design, or cannot deliver an approved journey sends the conductor back to the requirements flow for that requirement or the UX design only.
 
-### Build and acceptance (M3)
+### Build and acceptance
 
-Not yet designed in detail. One engineer instance per ready story, each in its own worktree, one reviewer per change, a review gate per milestone with a demo and batched human checks, then a reviewer runs the product against the acceptance criteria and the product manager judges the result against the PRD's definitions of done and the PR/FAQ.
+Question: does the software do what the selected requirements promise? Built 2026-10-18; the flow file is `skills/conductor/references/flows/build.md`.
+
+| Phase | Who | Produces | Checkpoint |
+| --- | --- | --- | --- |
+| 1. Setup | conductor | the milestone, the base branch, an integration branch nobody checks out | None, unless the milestone or base is unclear |
+| 2. Stories | one engineer instance per ready story, in parallel up to a limit, each in its own worktree; a fresh reviewer per change | each story built test-first, reviewed, rebased and fast-forwarded onto the integration branch by its engineer, and closed in `tasks` | Review per change, at most two rounds; architectural stops go to the architect, other stops to the user |
+| 3. Acceptance | a fresh reviewer runs every acceptance criterion through the product's real entry points; then a fresh product manager judges it against the definitions of done and the PR/FAQ | `acceptance.md`; failures become stories | Back to phase 2 for failures |
+| 4. Milestone gate | conductor with the user | a demo, batched human checks, approval | Review gate; at the last milestone you choose merge or pull request |
 
 Every run, in this flow and all the others, feeds the feedback ledger; the coach reads it later, outside the flow.
 
 ## Other flows
+
+All of these are built as flow files under `skills/conductor/references/flows/` (2026-10-18).
+
 
 **New feature.** The architect maps the affected area first, unless the architecture doc and glossary are current. Then the requirements flow extends the PRD (the idea flow runs first only when the feature needs market research or a PR/FAQ, which only large features do), the architecture flow designs and breaks it down, and the build and acceptance phases follow. Anthropic's feature-dev plugin is the closest prior art for this flow.
 
@@ -55,7 +65,7 @@ Every run, in this flow and all the others, feeds the feedback ledger; the coach
 
 **Bug fix.** A known defect. The conductor briefs the user on the defect, reproduction steps, impact, and which behavior must not change. An engineer uses the debugging skill to build a failing feedback loop and find the root cause, then writes a failing regression test and fixes the bug. A review gate on the root cause comes before the change only if the fix is large or hits a stop condition. A reviewer checks the change before the user confirms.
 
-**Troubleshoot.** A symptom without a known cause, such as an outage, a slowdown, or a broken environment. An engineer gathers evidence (logs, metrics, recent changes) and uses the debugging skill to test hypotheses against it, consulting the architect when the cause may lie in how components interact. The output is a diagnosis in the run folder: the root cause or the remaining candidates, the evidence, and a recommended next step. Troubleshooting changes no code, and mitigation steps that touch running systems go to the user as proposals. If the cause is a defect, the conductor proposes a bug-fix flow.
+**Troubleshoot.** A symptom without a known cause, such as an outage, a slowdown, or a broken environment. An engineer gathers evidence (logs, metrics, recent changes) and uses the debugging skill to test hypotheses against it, reading the architecture doc itself rather than handing the question to the architect, so the evidence and the reasoning stay in one context. A fresh reviewer checks the diagnosis as a critic. The output is a diagnosis in the run folder: the root cause or the remaining candidates, the evidence, and a recommended next step. Troubleshooting changes no code, and mitigation steps that touch running systems go to the user as proposals. If the cause is a defect, the conductor proposes a bug-fix flow.
 
 **Understand.** Architect instances fan out over the codebase, one per area, and one of them synthesizes their maps into an as-is architecture doc, a glossary, and a risk and debt map. The conductor closes with a briefing that walks the user through the result and answers questions. Its output often feeds a new-feature or rewrite flow, and the synthesizing architect can continue into that flow with its context intact.
 

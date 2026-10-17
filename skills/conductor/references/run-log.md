@@ -8,6 +8,7 @@ The run log, `log.md` in the run folder, is the conductor's memory across sessio
 # Run: <flow> — <product or request, in a few words>
 
 - **Run ID:** <the run folder's name>
+- **Branches:** <base and integration branch, for build, bug-fix and rewrite runs>
 - **Flow:** <flow> — chosen because <one sentence>
 - **Project root:** <path>
 - **Started:** <yyyy-mm-dd>
@@ -29,6 +30,14 @@ The run log, `log.md` in the run folder, is the conductor's memory across sessio
 - **Check:** <checker> — <pass | revise>; <findings by severity>; ledger <ids>
 - **Gate:** <yyyy-mm-dd> approved | changes requested (<n> comments, ledger <ids>)
 - **Rulings:** <decisions roles made on their own, one line each>
+
+## Stories
+
+Build runs only; the task store holds each story's detail.
+
+| Story | Engineer agent ID | Status | Review | Integrated |
+| --- | --- | --- | --- | --- |
+| S-3 | <id> | done | pass, round 1 (ledger <ids>) | <commit> |
 
 ## Decisions
 

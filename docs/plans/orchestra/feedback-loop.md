@@ -8,7 +8,20 @@ Orchestra runs two loops that touch at one point. The delivery loop is the softw
 
 Keeping the coach out of the delivery loop protects both. A flow never waits on a retro, and no skill changes while a run depends on it. The coach, for its part, sees patterns across many runs and projects that no single run can show, and it sees them through the ledger rather than through any one run's artifacts.
 
-The coach runs when you start it, in its own session. The conductor's only part is to say, when it closes a run, how many new findings the ledger holds since the last retro, so you can decide when a retro is worth running. A scheduled retro is also possible once the loop has proved itself.
+The coach runs when you start it, in its own session. What tells you to start it is deterministic, not anyone's judgment: the ledger script computes signals from the ledger, and two hooks and the conductor's close step surface them (see [Triggers](#triggers)). A scheduled retro is also possible once the loop has proved itself.
+
+## Triggers
+
+The improvement loop runs outside every flow, but it does not wait for someone to remember it. Four mechanisms connect the two loops without putting the improvement loop into any agent's context.
+
+- **Signals.** `feedback.py signals` reads the ledger and returns the reasons, if any, to run the coach now. Each is computed, not judged: `retro-due` (enough findings or closed runs since the last retro), `recurring` (one skill and category across several runs), `escape` (a medium or high finding that got past every check, found at acceptance or by the user), `rework` (phases that needed both rounds of revision), `trial-regressed` (a lighter review or cheaper model let problems escape), `evaluate-change` (a landed change has had enough runs to judge), `clean-streak` (a role whose work has passed many phases without a serious finding), and `skill-growth`. Thresholds have defaults and can be set per project in `.orchestra/config.toml` under `[coach]`.
+- **Run close.** The conductor ends every run with `feedback.py close-run`, which records the run (the denominator for every rate) and returns the signals; the conductor tells you about them in a sentence and does nothing else.
+- **Session start.** A plugin hook runs when a session starts. It finds the project's ledgers, adds them to a registry in the plugin's data folder (`${CLAUDE_PLUGIN_DATA}/ledgers.json`) so the coach can read every project on the machine, and, when signals are due, shows you one line. The line goes to you as a system message, never into the agent's context, so no session pays attention for the improvement loop.
+- **Subagent stop.** A plugin hook runs when any Orchestra role stops. It sends the role back once if its final message has no status or verdict line, or if a verdict cites ledger IDs that were never recorded, or asks for revision with nothing recorded. Then it writes an `agent` event with the role's status and the tokens its transcript shows. This keeps the ledger honest and complete without asking any agent to remember more: an unrecorded finding is the most likely way for the loop to starve.
+
+## Self-correction
+
+Every change the coach lands is itself on trial. Proposals and decisions are ledger events (`propose`, `decide`), so the ledger knows when each change landed. A concept change gets an `evaluate-change` signal once enough runs have closed after it, and the coach compares the findings it was meant to reduce before and after, then records it as kept or proposes reverting it. A savings trial, such as `[review] engineer = "sample"` or a cheaper model in `[models]`, lives in the project's config so it is reversible in one line; if a medium or high finding on that role escapes to acceptance or the user after the trial starts, the ledger raises `trial-regressed` at once and the coach proposes a `restore`. Rejected proposals stay in the ledger with the reason, so the coach does not propose them again without new evidence. Escapes grade the checkers as well as the authors: a finding that got past a check usually points at the check's exit criteria.
 
 ## Purpose
 
@@ -18,7 +31,7 @@ The failure this loop must avoid is the obvious one: turning each finding into a
 
 ## Record
 
-Every checker (peer checks, reviews, acceptance) and every review gate writes its findings to a ledger, `.orchestra/feedback.jsonl`, through a small `feedback` script in the feedback skill. Each line is one finding: the run and flow, the role and skill that produced the artifact (with the skill's version), the model and effort used, who found it (which checker, or the user), a category, a severity, its outcome (fixed, deferred, or overridden), and one sentence on why it happened as the checker sees it. The script also records cost per task where it is available: rework rounds and tokens. The ledger is JSON so the coach can count and group findings without reading prose.
+Every checker (peer checks, reviews, acceptance) and every review gate writes its findings to a ledger, `.orchestra/feedback.jsonl`, through a small `feedback` script in the feedback skill. Acceptance records its findings as found by `acceptance` and the user's comments as found by `user`; both mark findings that escaped the earlier checks. Each line is one finding: the run and flow, the role and skill that produced the artifact (with the skill's version), the model and effort used, who found it (which checker, or the user), a category, a severity, its outcome (fixed, deferred, or overridden), and one sentence on why it happened as the checker sees it. The script also records cost: rework rounds per phase from the conductor, and tokens per agent from the subagent-stop hook. The ledger is JSON so the coach can count and group findings without reading prose.
 
 Findings caught late, at acceptance or by the user, also grade the reviewers: each one got past a review, and the ledger records which.
 
@@ -44,7 +57,7 @@ Skills should shrink as models improve. Periodically the coach runs a skill's ev
 
 ## Get cheaper
 
-The ledger also shows where effort is wasted. If a role's work keeps passing review without significant findings, the coach proposes reviewing a sample of that role's changes instead of every one. If a role passes its checks consistently, the coach proposes a trial on a cheaper model or a lower effort, and the ledger shows whether quality held. If problems start reaching acceptance or the user after a reduction, the coach proposes restoring it. GSD does something similar for cost alone: it calibrates its plan token estimates against measured history.
+The ledger also shows where effort is wasted. If a role's work keeps passing review without significant findings, the coach proposes reviewing a sample of that role's changes instead of every one. If a role passes its checks consistently, the coach proposes a trial on a cheaper model or a lower effort, and the ledger shows whether quality held. If problems start reaching acceptance or the user after a reduction, the ledger raises `trial-regressed` and the coach proposes restoring it. Trials are settings in the project's `.orchestra/config.toml` (`[review]`, `[models]`), which the conductor reads when it dispatches, so each one is per project and undone by deleting a line. GSD does something similar for cost alone: it calibrates its plan token estimates against measured history.
 
 ## Guard
 
