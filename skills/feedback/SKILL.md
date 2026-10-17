@@ -1,6 +1,6 @@
 ---
 name: feedback
-description: Record findings from peer checks, reviews and user review gates in Orchestra's feedback ledger, a JSON Lines file, through a bundled script that stamps each finding with the role, skill version, model and effort that produced the work. Also guides a retro that reads the ledger and proposes concept-level changes to skills rather than one rule per finding. Use when checking another agent's artifact, when a user requests changes at a review gate, when closing a run and counting findings, or when running a retro over the ledger.
+description: Record findings from peer checks, code reviews, acceptance and user review gates in Orchestra's feedback ledger, a JSON Lines file, through a bundled script that stamps each finding with the role, skill version, model and effort that produced the work, and return a verdict. Use when checking another agent's artifact or change, when a user requests changes at a review gate, or when acceptance finds a problem. The coach skill reads the ledger later; this skill only writes it.
 ---
 
 # Feedback
@@ -19,13 +19,13 @@ A good record lets someone who never saw the artifact understand what went wrong
 
 - You are checking another agent's artifact against exit criteria, and need to record what you found.
 - The user asks for changes at a review gate, and each requested change is a finding.
-- A run is closing, and the conductor counts the findings since the last retro.
-- A retro reads the ledger to propose changes to how the team works.
+- Acceptance finds that the built product misses a definition of done.
 
 ### When NOT to use this skill
 
 - Notes to yourself, or a role's rulings. Those go in reports.
 - Praise and preferences. A finding is a gap between the artifact and its criteria, the brief, or the facts.
+- Reading the ledger to change how the team works. That is the coach's job, outside any flow.
 
 ## Constraints
 
@@ -67,7 +67,7 @@ python3 ${CLAUDE_SKILL_DIR}/scripts/feedback.py record --ledger <ledger> \
   --finding "<what is wrong, where>" --why "<what the author seems to have missed>"
 ```
 
-Name the craft skill as `research` or `orchestra:research`, or `none` when no skill applies. When the findings are the user's comments on your own work, record each comment as the user made it, with `--found-by user`; there is no artifact to check first. When you check a revision, resolve each finding your brief lists, yours or the user's, that the revision fixed, with `resolve --ledger <ledger> --id <id> --outcome fixed`; findings it did not fix stay open. When the user defers or overrides a finding at a gate, the conductor resolves it as `deferred` or `overridden`.
+Name the craft skill as `research` or `orchestra:research`, or `none` when no skill applies. `--found-by` is your role when you are a checker or reviewer, `acceptance` when you find the problem while running acceptance on a built product, and `user` for the user's comments; the last two mark findings that got past the earlier checks. When the findings are the user's comments on your own work, record each comment as the user made it, with `--found-by user`; there is no artifact to check first. When you check a revision, resolve each finding your brief lists, yours or the user's, that the revision fixed, with `resolve --ledger <ledger> --id <id> --outcome fixed`; findings it did not fix stay open. When the user defers or overrides a finding at a gate, the conductor resolves it as `deferred` or `overridden`.
 
 ### Step 3: Return the verdict
 
@@ -75,5 +75,4 @@ Write the verdict in the shape above to the path in your brief, and return the s
 
 ## Reference files
 
-- `scripts/feedback.py`: the ledger script. `count` gives findings since the last retro; `summary` groups them for a retro; `cost` records rework rounds and tokens for a phase; `retro` marks a retro done.
-- `references/retro.md`: how to read the ledger and turn recurring findings into proposals. Read only when running a retro.
+- `scripts/feedback.py`: the ledger script. Besides `record` and `resolve`, the conductor uses `cost` per phase and `close-run` when a run ends; the coach uses `signals`, `summary`, `propose`, `decide`, `proposals` and `retro`. Its header documents every command.
