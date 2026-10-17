@@ -58,7 +58,7 @@ orchestra/                         plugin root (this repo)
         flows/                     one file per flow
     coach/                         entry point for the improvement loop; runs in its own session
     briefing/  research/  feasibility/  estimation/  ux-design/  architecture/
-    planning/  test-first/
+    planning/  tdd-programming/
     review/  verification/  debugging/  tasks/  feedback/
     writing-studio/                existing; PR/FAQ and other human-facing docs
     skill-linter/                  existing
@@ -74,7 +74,7 @@ The repo already keeps skills under `skills/`, which is the plugin layout. Turni
 | M0 (done) | Prior-art survey and your review of the decision table | Done 2026-10-14; five rows revised from your answers |
 | M1 | Plugin manifest; conductor with its references; idea, requirements and architecture flows up to the approved architecture; product manager and architect roles, with instances resumed across phases; briefing, research, feasibility, estimation, ux-design and architecture skills; the feedback skill and ledger, with checkers recording from the first run; five spikes, run first (see below) | One dogfood run on the collaborative todo app reaches an approved architecture, every gate holds, the conductor never opens an artifact, a reader who was not in the session can follow each artifact, the artifacts compare favorably with a single-agent baseline on the same idea, and a coach retro run by hand turns the ledger into proposals you can judge |
 | M2 | The architecture flow's breakdown phase, the planning skill, the breakdown gate, and the `tasks` script with the Git adapter, tested with parallel claims from two worktrees and two machines | The breakdown from the M1 run contains stories an engineer could start without asking a question |
-| M3 | Engineer and reviewer roles; test-first, review and verification skills; acceptance; worktree isolation; merge order; the coach skill as its own entry point, with its first review-sampling and model trials | The M1 idea's MVP is built and passes acceptance |
+| M3 | Engineer and reviewer roles; tdd-programming, review and verification skills; acceptance; worktree isolation; merge order; the coach skill as its own entry point, with its first review-sampling and model trials | The M1 idea's MVP is built and passes acceptance |
 | M4 | New-feature, feature-task, bug-fix and troubleshoot flows; debugging skill | Each flow completes on the product built in M3 |
 | M5 | Understand and rewrite flows, with architect instances mapping a codebase in parallel | The understand flow produces a usable map of an existing open-source codebase |
 

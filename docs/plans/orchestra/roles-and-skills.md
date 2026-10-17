@@ -18,7 +18,7 @@ Orchestra has four team roles, which work inside the delivery loop, and a coach,
 | --- | --- | --- | --- | --- |
 | product manager | The voice of the customer: what to build and why, how it should feel to use, and whether the result keeps the PR/FAQ's promises | research (market and user lenses), feasibility, estimation, writing-studio (PR/FAQ, PRD), ux-design (when the product has a user interface), verification (acceptance from the customer's side) | Opus, high | Writes docs and wireframes only; web access |
 | architect | The whole system: how to build it, in what order, and what is expensive to change later | research (technical lens), architecture (target and as-is), planning (features, stories, roadmap), tasks | Opus, high | Writes docs and stories only; web access |
-| engineer | One story, end to end | planning (story into tasks), test-first, debugging, tasks, writing-studio (docs) | Sonnet, medium | `isolation: worktree` |
+| engineer | One story, end to end | planning (story into tasks), tdd-programming, debugging, tasks, writing-studio (docs) | Sonnet, medium | `isolation: worktree` |
 | reviewer | Another engineer's change, judged without the author's claims | review (quality, function, security and performance lenses), verification, debugging, feedback | Opus, high | Read-only, except running tests and the product |
 | coach | Orchestra itself over many runs | feedback, skill-creator | Opus, high | Its own session, outside any flow; writes proposals only |
 
@@ -52,7 +52,7 @@ Skills are what a role knows how to do; a role composes several. A role loads ea
 | estimation | product manager, architect | Small, medium or large per requirement with the basis and confidence, using the existing architecture doc when there is one; a ranking tool, not a plan |
 | architecture | architect | Target and as-is architecture, three options for every one-way-door decision, ADRs, the glossary, keeping the architecture doc small |
 | planning | architect, engineer | Two altitudes: features, stories and a roadmap from an architecture; tasks from a story. Vertical slices, dependency edges, sizing work to fit one context |
-| test-first | engineer | Test-driven development as a design practice |
+| tdd-programming | engineer | Test-first programming and testing principles: functional core and imperative shell, explicit dependencies, modular monolith, behaviour-first tests at unit, integration and E2E level; says when a change needs no tests |
 | debugging | engineer, reviewer | A failing feedback loop before hypotheses, recording behavior that must not change, escalating after repeated failed fixes |
 | review | reviewer | Reviewing without the author's claims; quality, function, security and performance lenses, used as the change's risk calls for; triage of findings |
 | ux-design | product manager | User journeys, information architecture, wireframes and simple clickable prototypes for the MVP, with usability and accessibility as quality bars; used only when the product has a user interface, and only after the PR/FAQ is approved, because the PR/FAQ's own wireframes stay rough by design |
