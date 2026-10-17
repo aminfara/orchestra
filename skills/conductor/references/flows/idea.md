@@ -40,7 +40,7 @@ When the idea is novel, the product manager then runs `orchestra:feasibility` on
 
 ## Phase 4: Working backwards
 
-**Who:** the same product manager, with `writing-studio` in its PR/FAQ format.
+**Who:** the same product manager, with `orchestra:writing-studio` in its PR/FAQ format.
 
 **Inputs:** `brief.md`, `research/market.md`, and `research/feasibility.md` if it exists.
 

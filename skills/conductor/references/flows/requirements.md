@@ -20,7 +20,7 @@ The PRD is a living document at `<root>/docs/product/prd.md`. If it exists, this
 
 ## Phase 2: Requirements
 
-**Who:** the product manager, with `writing-studio` for the PRD, `orchestra:estimation` for effort and risk, and `orchestra:feasibility` for any requirement estimation marks unknown. Estimation uses the existing architecture doc and glossary when there are any. A requirement whose size could move the cut line and cannot be settled on paper goes to a spike subagent with one question, which returns a short digest.
+**Who:** the product manager, with `orchestra:writing-studio` for the PRD, `orchestra:estimation` for effort and risk, and `orchestra:feasibility` for any requirement estimation marks unknown. Estimation uses the existing architecture doc and glossary when there are any. A requirement whose size could move the cut line and cannot be settled on paper goes to a spike subagent with one question, which returns a short digest.
 
 **Produces:** the new or updated `<root>/docs/product/prd.md`, with these sections:
 
