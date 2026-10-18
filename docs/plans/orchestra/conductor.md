@@ -51,7 +51,7 @@ Nesting also works: a background subagent can spawn its own subagents ([sub-agen
 
 Orchestra writes two kinds of files into a target project. Living docs describe the current system and are updated in place by each flow, following OpenSpec's living spec: `docs/product/prfaq.md`, `docs/architecture.md`, `docs/adr/` and the domain glossary. They read as the project's own documentation, so they stay under `docs/`. Each one stays short enough to read in one sitting and points to detail (an ADR, a module doc) instead of inlining it, because every role that reads it pays in tokens and attention.
 
-Per-run artifacts belong to one run of one flow and sit in a hidden folder, `.orchestra/<yyyy-mm-dd>-<flow>-<slug>/`, holding `log.md`, `brief.md`, `research/`, `plan.md` and `acceptance.md`. Tasks live behind the [`tasks` interface](tasks.md) rather than in `plan.md`. `.orchestra/config.toml` is always committed; whether run folders are committed is decided after the first dogfood run.
+Per-run artifacts belong to one run of one flow and sit in a hidden folder, `.orchestra/<yyyy-mm-dd>-<flow>-<slug>/`, holding `log.md`, `brief.md`, `research/`, `plan.md` and `acceptance.md`. Tasks live behind the [`tasks` interface](tasks.md) rather than in `plan.md`. `.orchestra/config.toml` is always committed, and the conductor commits the living docs and the run folder locally at each approved gate.
 
 When the conductor closes a run, it records the outcome with `feedback.py close-run`, which returns the ledger's signals, and tells you in a sentence when the coach has something to act on. It does not run the coach itself.
 

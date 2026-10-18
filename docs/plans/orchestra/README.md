@@ -43,6 +43,7 @@ Each note covers one part and can be read on its own.
 - [Tasks](tasks.md): the six task operations, the Git adapter, and tracker adapters after the MVP.
 - [Feedback loop](feedback-loop.md): how findings become concepts, tools or project notes, and how Orchestra gets leaner and cheaper.
 - [M1 sessions](m1-sessions.md): how the overseer and dogfood sessions share work, and the prompt to start each.
+- [Dogfood run, 2026-10-18](dogfood-2026-10-18.md): TripSplit from idea to an approved breakdown, what it exposed and what changed.
 
 ## Plugin layout
 
@@ -76,7 +77,7 @@ The repo already keeps skills under `skills/`, which is the plugin layout. Turni
 | --- | --- | --- | --- |
 | M0 | Prior-art survey and your review of the decision table | Done 2026-10-14; five rows revised from your answers | Done |
 | M1 | Plugin manifest; conductor with its references; idea, requirements and architecture flows up to the approved architecture; product manager and architect roles, with instances resumed across phases; briefing, research, feasibility, estimation, ux-design and architecture skills; the feedback skill and ledger, with checkers recording from the first run; five spikes, run first (see below) | One dogfood run on the collaborative todo app reaches an approved architecture, every gate holds, the conductor never opens an artifact, a reader who was not in the session can follow each artifact, the artifacts compare favorably with a single-agent baseline on the same idea, and a coach retro run by hand turns the ledger into proposals you can judge | Done, per Ali, 2026-10-18 |
-| M2 | The architecture flow's breakdown phase, the planning skill, the breakdown gate, and the `tasks` script with the Git adapter, tested with parallel claims from two worktrees and two machines | The breakdown from the M1 run contains stories an engineer could start without asking a question | Built 2026-10-18; parallel claims pass in tests (two worktrees, and two clones of one remote standing in for two machines); the breakdown criterion needs a dogfood run |
+| M2 | The architecture flow's breakdown phase, the planning skill, the breakdown gate, and the `tasks` script with the Git adapter, tested with parallel claims from two worktrees and two machines | The breakdown from the M1 run contains stories an engineer could start without asking a question | Built 2026-10-18; parallel claims pass in tests (two worktrees, and two clones of one remote standing in for two machines); met in the TripSplit dogfood run, 2026-10-18 (S-1 and S-9 name the commands, formulas, copy and tests an engineer needs) |
 | M3 | Engineer and reviewer roles; tdd-programming, review and verification skills; the build flow with acceptance; worktree isolation; integration order; the coach skill as its own entry point, with its signals, hooks and trials | The M1 idea's MVP is built and passes acceptance | Built 2026-10-18; needs a dogfood run |
 | M4 | New-feature, feature-task, bug-fix and troubleshoot flows; debugging skill | Each flow completes on the product built in M3 | Built 2026-10-18; needs dogfood runs |
 | M5 | Understand and rewrite flows, with architect instances mapping a codebase in parallel | The understand flow produces a usable map of an existing open-source codebase | Built 2026-10-18; needs a dogfood run |
@@ -123,7 +124,7 @@ Made on 2026-10-14:
 
 - **Plugin root:** this repo's root becomes the plugin. writing-studio and skill-linter ship with it unchanged.
 - **Name:** the orchestrator skill stays `conductor`, invoked as `orchestra:conductor`.
-- **Doc layout:** living docs under `docs/`, kept small; per-run artifacts under `.orchestra/`. `config.toml` is always committed; whether run folders are committed is decided after the first dogfood run.
+- **Doc layout:** living docs under `docs/`, kept small; per-run artifacts under `.orchestra/`. `config.toml` is always committed; run folders are committed too, decided after the first full dogfood run (2026-10-18).
 - **Skill overlap:** you will uninstall the overlapping Matt Pocock skills, so Orchestra's craft skills can trigger directly outside a flow.
 - **Ceremony:** the conductor picks the flow from the request's type, and each flow sets its own ceremony. The briefings and review gates of the idea, requirements and architecture flows are accepted.
 - **Engineer autonomy:** five stop conditions (irreversible, security-sensitive, out of scope, architectural, or a backward-incompatible change to a released API not behind a feature gate). Backward-compatible API changes do not stop.
@@ -152,7 +153,14 @@ Made on 2026-10-18 while building M2 to M5, as rulings you can reverse:
 - **Coach triggers and self-correction:** deterministic signals in the ledger script, surfaced at run close and by a session-start hook as a message to you, not to the agent; a subagent-stop hook that keeps the ledger complete; proposals and decisions as ledger events; savings trials as project settings that the ledger watches and flags for restore. See [Feedback loop](feedback-loop.md).
 - **Review intensity and models per project:** `[review]` and `[models]` in `.orchestra/config.toml`, read by the conductor at dispatch, so a trial in one project does not change another, and is undone by deleting a line.
 
+Made on 2026-10-18 after the first full dogfood run ([notes](dogfood-2026-10-18.md)):
+
+- **Run folders are committed:** the conductor commits the living docs and the run folder locally at each approved gate, never pushing unless you ask. The run logs and the ledger proved their worth when two usage-limit interruptions needed a resume, and engineers' worktrees need the docs. This answers the doc-layout question.
+- **Continuity has a price:** a resumed instance re-reads its context on every call and pays for all of it again after a long pause, so the conductor resumes within a run while an instance is lean, and otherwise starts a fresh one from its notes.
+- **Roles leave a trail:** authoring roles write as they go and keep their notes current after each major step, so an interruption loses at most one step.
+
 ## Open questions
 
 1. **Single-agent baseline for the build.** M1 compared artifacts with a single agent. No comparison yet exists for the build flow, where the evidence says multi-agent setups most often lose (see the [multi-agent frameworks note](../../research/prior-art/multi-agent-frameworks.md)). The first M3 dogfood run should build one milestone twice, once with the build flow and once with one agent and the same skills, before parallel engineers become the default.
-2. **Hook behaviour in a long run.** A headless session on 2026-10-18 confirmed the hooks with the plugin loaded by `--plugin-dir`: the session-start hook showed its one-line message for a ledger with a due signal; the subagent-stop hook saw the reviewer as `orchestra:reviewer`, sent back a bare reply once and got a verdict on the second stop, and recorded each stop with its token count from the transcript. Untested: a report handed back through the `SubagentHandback` tool, and how often the send-back fires in a real flow, which the ledger's agent events will show.
+2. **Cost.** The first full dogfood run spent most of a 5-hour Pro window per two phases with every role but the engineer on Opus at high effort. The fixes above cut the cost of continuity; whether checkers can drop to a cheaper model or a lighter effort is for a coach trial once the ledger shows a clean streak.
+3. **Hook behaviour in a long run.** A headless session on 2026-10-18 confirmed the hooks with the plugin loaded by `--plugin-dir`: the session-start hook showed its one-line message for a ledger with a due signal; the subagent-stop hook saw the reviewer as `orchestra:reviewer`, sent back a bare reply once and got a verdict on the second stop, and recorded each stop with its token count from the transcript. In the TripSplit dogfood run, the hook recorded 31 stops from 10 instances, and no send-back appears in the transcripts. Untested: a report handed back through the `SubagentHandback` tool.

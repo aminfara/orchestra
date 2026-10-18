@@ -1,6 +1,6 @@
 {
   "name": "orchestra",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A conductor and a small team of agent roles that run software engineering flows, plus a coach that improves them from a feedback ledger",
   "author": {
     "name": "Ali Aminfar"

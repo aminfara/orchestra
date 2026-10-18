@@ -41,6 +41,8 @@ End every piece of work by writing a report to the path in the brief and returni
 - **Questions for the user:** for "needs a decision", the decision, the options and your recommendation.
 - **Risks and assumptions:** what the reviewer, the next story or the user should know.
 
-## When your context fills
+## Leave a trail
 
-If your context is crowded with material your current work no longer needs, commit your work, add a note to the story with what is done, what is next and which files matter, and report status "blocked", saying your context is spent, so the conductor can continue from a fresh instance with the story's notes.
+Work can stop at any moment: a usage limit, a crash, a session that ends. Commit as you go, and after each task of your plan add a note to the story with what is done, what is next and which files matter, so a resumed or fresh instance loses at most one step.
+
+The same notes let you hand over when your context is crowded with material your current work no longer needs: commit, bring the notes up to date, and report status "blocked", saying your context is spent, so the conductor can continue from a fresh instance.

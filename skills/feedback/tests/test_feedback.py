@@ -321,13 +321,15 @@ class AgentEventsTest(unittest.TestCase):
     def test_summary_tallies_agent_work(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             ledger = str(Path(tmp) / "feedback.jsonl")
-            for status, tokens in (("done", 1000), ("blocked", 500)):
+            for status, tokens, cached, peak in (("done", 1000, 800, 120), ("blocked", 500, 300, 90)):
                 code, _ = run("agent", "--ledger", ledger, "--role", "engineer",
-                              "--agent-id", "a1", "--status", status, "--tokens", str(tokens))
+                              "--agent-id", "a1", "--status", status, "--tokens", str(tokens),
+                              "--cache-read-tokens", str(cached), "--peak-context", str(peak))
                 self.assertEqual(code, 0)
             _, out = run("summary", "--ledger", ledger)
             self.assertEqual(out["agents"]["engineer"],
-                             {"stops": 2, "tokens": 1500, "statuses": {"done": 1, "blocked": 1}})
+                             {"stops": 2, "tokens": 1500, "cache_read_tokens": 1100,
+                              "peak_context": 120, "statuses": {"done": 1, "blocked": 1}})
 
 
 if __name__ == "__main__":

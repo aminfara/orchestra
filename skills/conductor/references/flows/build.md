@@ -12,7 +12,7 @@ Each story belongs to one engineer instance, which plans it, builds it, fixes wh
 
 **Produces:** in the run log, the milestone to build, the base branch the user works on, and the integration branch, `orchestra/build/<run slug>`, created from the base with `git branch <integration> <base>` and never checked out by anyone (engineers update it with `git push . HEAD:<integration>`, which Git refuses for a checked-out branch). Note the config's `[build]`, `[review]` and `[models]` tables if present; `references/briefing-roles.md` says what they change.
 
-**Exit criteria:** the integration branch exists, and `tasks ready --milestone <m>` lists the milestone's first stories.
+**Exit criteria:** the integration branch exists and contains the committed living docs the briefs point to (engineers and reviewers read them from their worktrees), and `tasks ready --milestone <m>` lists the milestone's first stories.
 
 **Checkpoint:** none, unless the user has not said which milestone to build or which branch to start from; then ask in one batch.
 

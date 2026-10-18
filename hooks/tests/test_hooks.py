@@ -85,18 +85,20 @@ class TranscriptTest(unittest.TestCase):
         path.write_text("".join(json.dumps(e) + "\n" for e in entries) + "not json\n")
         return path
 
-    def test_usage_counts_each_message_once(self) -> None:
+    def test_usage_counts_each_message_once_at_its_final_count(self) -> None:
         usage = {"input_tokens": 10, "output_tokens": 5,
                  "cache_read_input_tokens": 100, "cache_creation_input_tokens": 20}
+        streaming = {**usage, "output_tokens": 1}
         with tempfile.TemporaryDirectory() as tmp:
             path = self.write(
                 tmp,
-                {"type": "assistant", "message": {"id": "m1", "usage": usage, "content": []}},
+                {"type": "assistant", "message": {"id": "m1", "usage": streaming, "content": []}},
                 {"type": "assistant", "message": {"id": "m1", "usage": usage, "content": []}},
                 {"type": "assistant", "message": {"id": "m2", "usage": usage, "content": []}},
                 {"type": "user", "message": {"content": "hi"}},
             )
-            self.assertEqual(hooks.usage(path), (270, 10))
+            self.assertEqual(hooks.usage(path), {"tokens": 270, "output_tokens": 10,
+                                                 "cache_read_tokens": 200, "peak_context": 130})
 
     def test_report_handed_back_through_a_tool_is_found(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -108,7 +110,7 @@ class TranscriptTest(unittest.TestCase):
     def test_missing_transcript_falls_back_to_last_message(self) -> None:
         payload = {"last_assistant_message": REPORT, "agent_transcript_path": "/nope.jsonl"}
         self.assertEqual(hooks.final_text(payload), REPORT)
-        self.assertEqual(hooks.usage(Path("/nope.jsonl")), (0, 0))
+        self.assertEqual(hooks.usage(Path("/nope.jsonl"))["tokens"], 0)
 
 
 class LedgerDiscoveryTest(unittest.TestCase):
@@ -181,6 +183,21 @@ class SubagentStopTest(unittest.TestCase):
             agent = self.ledger_events(root)[-1]
             self.assertEqual((agent["type"], agent["role"], agent["status"]),
                              ("agent", "reviewer", "verdict: revise"))
+
+    def test_first_stop_in_a_run_starts_the_ledger(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "project"
+            (root / ".orchestra" / "2026-10-18-idea-trip").mkdir(parents=True)
+            out = hooks.subagent_stop(self.payload(REPORT, agent_type="orchestra:product-manager"),
+                                      {"CLAUDE_PROJECT_DIR": str(root)})
+            self.assertIsNone(out)
+            agent = self.ledger_events(root)[-1]
+            self.assertEqual((agent["role"], agent["status"]), ("product-manager", "done"))
+
+    def test_project_without_orchestra_folder_gets_no_ledger(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            hooks.subagent_stop(self.payload(REPORT), {"CLAUDE_PROJECT_DIR": tmp})
+            self.assertFalse((Path(tmp) / ".orchestra").exists())
 
     def test_other_agents_are_left_alone(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

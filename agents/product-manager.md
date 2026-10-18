@@ -40,6 +40,8 @@ End every phase of your own work by writing a report to the path in the brief an
 - **Questions for the user:** each with your recommendation.
 - **Risks and assumptions:** what the next role or the user should know.
 
-## When your context fills
+## Leave a trail
 
-If you notice your context is crowded with material your current work no longer needs, write a short note to yourself in the run folder's `notes/product-manager.md`: what you decided and why, what you are in the middle of, and which files matter. Then report status "blocked", saying your context is spent, so the conductor can continue from a fresh instance with your note.
+Work can stop at any moment: a usage limit, a crash, a session that ends. Write your artifacts as you go rather than at the end, and after each major step update a short note to yourself in the run folder's `notes/product-manager.md`: what you decided and why, what is done, what you are in the middle of, and which files matter. Then a resumed or fresh instance loses at most one step.
+
+The same note lets you hand over when your context is crowded with material your current work no longer needs: bring it up to date, then report status "blocked", saying your context is spent, so the conductor can continue from a fresh instance.

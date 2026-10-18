@@ -25,6 +25,7 @@ Usage:
                           [--rounds N] [--tokens N]
     feedback.py agent     --ledger PATH --role ROLE --agent-id ID --status S
                           [--tokens N] [--output-tokens N]
+                          [--cache-read-tokens N] [--peak-context N]
     feedback.py close-run --ledger PATH --run RUN --flow FLOW --outcome TEXT
     feedback.py count     --ledger PATH...
     feedback.py summary   --ledger PATH... [--all]
@@ -396,6 +397,7 @@ def cmd_agent(args: argparse.Namespace) -> dict:
     append_event(single(args), {
         "type": "agent", "ts": now(), "role": args.role, "agent_id": args.agent_id,
         "status": args.status, "tokens": args.tokens, "output_tokens": args.output_tokens,
+        "cache_read_tokens": args.cache_read_tokens, "peak_context": args.peak_context,
     })
     return {"recorded": True}
 
@@ -436,9 +438,12 @@ def cmd_summary(args: argparse.Namespace) -> dict:
     agents: dict[str, dict] = {}
     for e in window:
         if e["type"] == "agent":
-            a = agents.setdefault(e["role"], {"stops": 0, "tokens": 0, "statuses": Counter()})
+            a = agents.setdefault(e["role"], {"stops": 0, "tokens": 0, "cache_read_tokens": 0,
+                                              "peak_context": 0, "statuses": Counter()})
             a["stops"] += 1
             a["tokens"] += e.get("tokens") or 0
+            a["cache_read_tokens"] += e.get("cache_read_tokens") or 0
+            a["peak_context"] = max(a["peak_context"], e.get("peak_context") or 0)
             a["statuses"][e["status"]] += 1
     return {
         "window": "all" if args.all else "since_retro",
@@ -561,6 +566,8 @@ def build_parser() -> argparse.ArgumentParser:
     a.add_argument("--status", required=True)
     a.add_argument("--tokens", type=int)
     a.add_argument("--output-tokens", type=int)
+    a.add_argument("--cache-read-tokens", type=int)
+    a.add_argument("--peak-context", type=int)
 
     cr = command("close-run", cmd_close_run)
     cr.add_argument("--run", required=True)

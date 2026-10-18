@@ -37,7 +37,9 @@ Orchestra has two entry points, each for its own session.
 | understand | An unfamiliar codebase | An as-is architecture, glossary and risk map |
 | rewrite | A system to rebuild | A target, a migration, parity tests, and the build |
 
-Orchestra writes living docs to `docs/` in the project (`docs/product/`, `docs/architecture.md`, `docs/adr/`, `docs/glossary.md`), and per-run files, the task store's settings and the feedback ledger to `.orchestra/`. Commit `.orchestra/config.toml`. Tasks live on a branch, `orchestra/tasks`, that no one checks out.
+Orchestra writes living docs to `docs/` in the project (`docs/product/`, `docs/architecture.md`, `docs/adr/`, `docs/glossary.md`), and per-run files, the task store's settings and the feedback ledger to `.orchestra/`. The conductor commits both locally at each approved gate. Tasks live on a branch, `orchestra/tasks`, that no one checks out.
+
+Run the conductor in an interactive session. A one-shot headless session (`claude -p`) exits when the conductor ends its turn and stops any role still running in the background; to drive it from a script, keep one session open with `--input-format stream-json`.
 
 ### Settings
 
@@ -64,7 +66,7 @@ retro_runs = 3           # thresholds for the ledger's signals
 
 ### Hooks
 
-The plugin installs two hooks. When a session starts, one finds the project's feedback ledgers, registers them so the coach can read across projects, and shows you one line when the ledger says the coach has something to act on. When an Orchestra role stops, the other sends it back once if its report has no status or verdict line or cites findings it never recorded, and logs its token use to the ledger. Neither adds anything to an agent's context.
+The plugin installs two hooks. When a session starts, one finds the project's feedback ledgers, registers them so the coach can read across projects, and shows you one line when the ledger says the coach has something to act on. When an Orchestra role stops, the other sends it back once if its report has no status or verdict line or cites findings it never recorded, and logs its token use to the ledger, including the largest context it carried. Neither adds anything to an agent's context.
 
 ## Requirements
 

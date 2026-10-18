@@ -113,22 +113,28 @@ def final_text(payload: dict) -> str:
     return text
 
 
-def usage(path: Path) -> tuple[int, int]:
-    """Total and output tokens in a transcript, counting each message once."""
-    seen, total, output = set(), 0, 0
+def usage(path: Path) -> dict:
+    """Token use in a transcript, counting each message once.
+
+    `tokens` is everything the instance read and wrote; `cache_read_tokens` is the
+    part re-read from the prompt cache, and `peak_context` the largest context one
+    call carried, which shows when resuming an instance has become expensive.
+    """
+    final = {}  # a streamed message repeats its usage; the last entry holds the final count
     for entry in transcript_entries(path):
         message = entry.get("message") or {}
-        u = message.get("usage")
-        if entry.get("type") != "assistant" or not isinstance(u, dict):
-            continue
-        if message.get("id") in seen:
-            continue
-        seen.add(message.get("id"))
-        total += sum(u.get(k) or 0 for k in ("input_tokens", "output_tokens",
-                                             "cache_read_input_tokens",
-                                             "cache_creation_input_tokens"))
+        if entry.get("type") == "assistant" and isinstance(message.get("usage"), dict):
+            final[message.get("id")] = message["usage"]
+    total = output = cached = peak = 0
+    for u in final.values():
+        context = sum(u.get(k) or 0 for k in ("input_tokens", "cache_read_input_tokens",
+                                              "cache_creation_input_tokens"))
+        total += context + (u.get("output_tokens") or 0)
         output += u.get("output_tokens") or 0
-    return total, output
+        cached += u.get("cache_read_input_tokens") or 0
+        peak = max(peak, context)
+    return {"tokens": total, "output_tokens": output,
+            "cache_read_tokens": cached, "peak_context": peak}
 
 
 # ---------------------------------------------------------------------------
@@ -153,6 +159,14 @@ def register(registry: Path, ledgers: list[Path]) -> None:
     merged = sorted({str(p) for p in known} | {str(p) for p in ledgers})
     registry.parent.mkdir(parents=True, exist_ok=True)
     registry.write_text(json.dumps({"ledgers": merged}, indent=2) + "\n")
+
+
+def run_ledgers(root: Path) -> list[Path]:
+    """The project's ledgers, or the one its first finding would start, once a run exists."""
+    ledgers = find_ledgers(root)
+    if not ledgers and (root / ".orchestra").is_dir():
+        return [root / ".orchestra" / "feedback.jsonl"]
+    return ledgers
 
 
 def choose_ledger(text: str, ledgers: list[Path]) -> Path | None:
@@ -201,7 +215,7 @@ def subagent_stop(payload: dict, env: dict) -> dict | None:
     if not agent_type.startswith("orchestra:"):
         return None
     text = final_text(payload)
-    ledgers = find_ledgers(project_root(payload, env))
+    ledgers = run_ledgers(project_root(payload, env))
     if not payload.get("stop_hook_active"):
         reason = check(text, known_ids(ledgers))
         if reason:
@@ -209,12 +223,13 @@ def subagent_stop(payload: dict, env: dict) -> dict | None:
     ledger = choose_ledger(text, ledgers)
     if ledger:
         path = payload.get("agent_transcript_path")
-        total, output = usage(Path(path)) if path else (0, 0)
+        used = usage(Path(path)) if path else {}
         feedback.append_event(ledger, {
             "type": "agent", "ts": feedback.now(),
             "role": agent_type.removeprefix("orchestra:"),
             "agent_id": payload.get("agent_id"), "status": status_of(text),
-            "tokens": total or None, "output_tokens": output or None,
+            **{k: used.get(k) or None for k in
+               ("tokens", "output_tokens", "cache_read_tokens", "peak_context")},
         })
     return None
 

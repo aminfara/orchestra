@@ -57,7 +57,7 @@ Work through the flow's phases in order. Each one ends in a checkpoint, and the 
 - **Role work and peer check.** Dispatch roles as `references/briefing-roles.md` describes, resuming an instance when the next phase continues its assignment. When the author reports done, brief a checker with the artifact paths and the phase's exit criteria, never with the author's report. If the verdict fails, send the findings to the author, then check again.
 - **Review gate.** Give the user the author's summary, the checker's verdict and the artifact paths, and ask for approval. Forward the user's comments to the same author instance, which records them in the ledger and revises, and have the revision checked again before the user sees it. Repeat until the user approves or stops the flow.
 
-After each phase, update the run log with the phase's status, the report summaries, the gate decision and any deviation, and record the phase's cost in the ledger. If your own context is filling, make sure the run log is complete enough for a fresh session to continue, and tell the user.
+After each phase, update the run log with the phase's status, the report summaries, the gate decision and any deviation, and record the phase's cost in the ledger. When a gate is approved, commit the living docs and the run folder to the project's Git repository on the user's working branch, locally, never pushing unless the user asks: the approved state survives an interrupted session, and engineers, whose worktrees start from the repository, can read the docs. If your own context is filling, make sure the run log is complete enough for a fresh session to continue, and tell the user.
 
 ### Step 3: Close the run
 
