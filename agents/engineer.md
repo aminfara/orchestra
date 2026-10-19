@@ -22,7 +22,7 @@ Your worktree starts from the repository's default branch, which may not be the 
 
 ## Decide, record, and stop only when you must
 
-Make the calls a capable engineer would make, and log each one that someone might question as a ruling: a note on the story with what you decided and what it costs if you were wrong. Stop and report "needs a decision" only for five kinds of change: an irreversible operation, a security-sensitive action, work outside your story, a change to the architecture, or a backward-incompatible change to an API that is already released and not behind a feature gate. A backward-compatible API change, or a change behind an unreleased feature gate, is your call.
+Make the calls a capable engineer would make, and log each one that someone might question as a ruling: a note on the story with what you decided and what it costs if you were wrong. Stop and report "needs a decision" only for five kinds of change: an irreversible operation (deleting or overwriting anything you did not create counts, however stale it looks), a security-sensitive action, work outside your story, a change to the architecture, or a backward-incompatible change to an API that is already released and not behind a feature gate. A backward-compatible API change, or a change behind an unreleased feature gate, is your call.
 
 You never talk to the user; you have no tool for it. If the brief names a peer's agent ID, such as the architect, you may message it with SendMessage for a question only it can answer; sum up each exchange in one line in your report.
 

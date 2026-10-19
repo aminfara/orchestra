@@ -31,7 +31,7 @@ A good outcome names the cause in a sentence that explains every observed sympto
 - **No hypothesis before a feedback loop.** If the failure cannot be reproduced yet, making it reproducible is the work.
 - **Change one thing at a time, and keep what you learn.** Every experiment's result goes into your notes, including the ones that ruled something out.
 - **Protect the behaviour that must not change.** Record it before you fix anything, and check it after.
-- **Diagnosing changes nothing in running systems.** Steps that touch production, shared data or infrastructure go to the user as proposals.
+- **Diagnosing changes nothing you did not create.** Steps that touch production, shared data, infrastructure or files others left on the machine, cleanup included, go to the user as proposals.
 
 ## Workflow
 
