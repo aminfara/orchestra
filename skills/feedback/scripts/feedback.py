@@ -496,11 +496,16 @@ def cmd_decide(args: argparse.Namespace) -> dict:
         raise UnknownProposal(f"no proposal with id '{args.id}'")
     event = {"type": "decision", "ts": now(), "proposal": args.id,
              "decision": decision, "note": args.note}
-    if decision == "accepted" and proposal["target"].startswith("skills/"):
-        try:
-            event["skill_version"] = skill_version(proposal["target"]).version
-        except UnknownSkill:
-            event["skill_version"] = None
+    skills = [t.strip() for t in proposal["target"].split(",") if t.strip().startswith("skills/")]
+    if decision == "accepted" and skills:
+        versions = {}
+        for target in skills:
+            try:
+                found = skill_version(target)
+                versions[found.name] = found.version
+            except UnknownSkill:
+                versions[target.removeprefix("skills/")] = None
+        event["skill_version"] = versions
     for ledger in args.ledgers:
         append_event(ledger, event)
     return {"id": args.id, "decision": decision}

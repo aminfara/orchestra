@@ -296,7 +296,14 @@ class ProposalsTest(unittest.TestCase):
                    "--target", "skills/feedback", "--summary", "x")
         run("decide", "--ledger", self.ledger, "--id", p["id"], "--decision", "accepted")
         _, listed = run("proposals", "--ledger", self.ledger)
-        self.assertEqual(len(listed["proposals"][0]["skill_version"]), 10)
+        self.assertEqual(len(listed["proposals"][0]["skill_version"]["feedback"]), 10)
+
+    def test_accepting_a_change_to_several_skills_records_each_version(self) -> None:
+        _, p = run("propose", "--ledger", self.ledger, "--kind", "concept",
+                   "--target", "skills/feedback,skills/tasks", "--summary", "x")
+        run("decide", "--ledger", self.ledger, "--id", p["id"], "--decision", "accepted")
+        _, listed = run("proposals", "--ledger", self.ledger)
+        self.assertEqual(sorted(listed["proposals"][0]["skill_version"]), ["feedback", "tasks"])
 
     def test_errors_are_specific(self) -> None:
         code, err = run("decide", "--ledger", self.ledger, "--id", "p-none", "--decision", "accepted")

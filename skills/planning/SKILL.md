@@ -29,7 +29,7 @@ A good breakdown lets any engineer pick up any ready story, read its acceptance 
 ## Constraints
 
 - **Slice vertically.** A story delivers one observable behaviour end to end, however thin, rather than one layer of many behaviours.
-- **Acceptance criteria are checkable from outside.** Each one states what a user or caller observes, traced to a requirement's definition of done.
+- **Acceptance criteria are checkable from outside.** Each one states what a user or caller observes, traced to a requirement's definition of done. A rule that covers every save, screen or milestone becomes a criterion on every story that adds one.
 - **Add an edge only for a real dependency.** A story is blocked when it needs another's interface or data, or when both would change the same files; otherwise let them run in parallel.
 - **Leave the how to the engineer.** Point to the architecture section, ADR or UX screen a story builds on instead of restating it.
 

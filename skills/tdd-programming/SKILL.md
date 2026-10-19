@@ -73,7 +73,7 @@ Test each module on its own. A module's unit and integration tests set up data t
 
 Make each test independent and obvious when it fails. A test gives the same result alone or in any order, and its name and assertion point straight at the cause. Write tests as straight-line Arrange, Act, Assert code without loops or conditionals; a table-driven or parameterised test over a list of cases is fine. Repeat a little setup rather than hide it in shared helpers (DAMP, "descriptive and meaningful phrases", over DRY). For asynchronous flows, poll for the expected outcome with a timeout instead of sleeping.
 
-Test what you would hate to see break, then stop. Cover the behaviour you are adding or changing and the edge cases real inputs reach. Skip tests for plain accessors, wiring, and library or framework behaviour. Coverage percentage points at untested code; it is not a target.
+Test what you would hate to see break, then stop. Cover the behaviour you are adding or changing with inputs from every class the requirement names and at its extremes (the longest name, the largest amount, the state with the most text), not the convenient sample. Skip tests for plain accessors, wiring, and library or framework behaviour. Coverage percentage points at untested code; it is not a target.
 
 This step is done when every behaviour you settled has a test and each new test has failed for the expected reason.
 

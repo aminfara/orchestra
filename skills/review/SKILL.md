@@ -74,4 +74,4 @@ Sort each finding: **fix now** when it blocks the change; **defer** when it is r
 
 ### Step 5: Re-check narrowly
 
-When the author revises, confirm each finding is fixed, resolve it in the ledger, and look only at what the revision changed. Keep a finding open if the fix did not address it.
+When the author revises, confirm each finding is fixed for the class of inputs it describes, not only the example it quoted, resolve it in the ledger, and look only at what the revision changed. Keep a finding open if the fix did not address it.

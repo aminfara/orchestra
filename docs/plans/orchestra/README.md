@@ -43,7 +43,7 @@ Each note covers one part and can be read on its own.
 - [Tasks](tasks.md): the six task operations, the Git adapter, and tracker adapters after the MVP.
 - [Feedback loop](feedback-loop.md): how findings become concepts, tools or project notes, and how Orchestra gets leaner and cheaper.
 - [M1 sessions](m1-sessions.md): how the overseer and dogfood sessions share work, and the prompt to start each.
-- [Dogfood run, 2026-10-18](dogfood-2026-10-18.md): TripSplit from idea to an approved breakdown, what it exposed and what changed.
+- [Dogfood run, 2026-10-18](dogfood-2026-10-18.md): TripSplit from idea to a partly built, accepted milestone and the first coach retro, what it exposed and what changed.
 
 ## Plugin layout
 
@@ -78,7 +78,7 @@ The repo already keeps skills under `skills/`, which is the plugin layout. Turni
 | M0 | Prior-art survey and your review of the decision table | Done 2026-10-14; five rows revised from your answers | Done |
 | M1 | Plugin manifest; conductor with its references; idea, requirements and architecture flows up to the approved architecture; product manager and architect roles, with instances resumed across phases; briefing, research, feasibility, estimation, ux-design and architecture skills; the feedback skill and ledger, with checkers recording from the first run; five spikes, run first (see below) | One dogfood run on the collaborative todo app reaches an approved architecture, every gate holds, the conductor never opens an artifact, a reader who was not in the session can follow each artifact, the artifacts compare favorably with a single-agent baseline on the same idea, and a coach retro run by hand turns the ledger into proposals you can judge | Done, per Ali, 2026-10-18 |
 | M2 | The architecture flow's breakdown phase, the planning skill, the breakdown gate, and the `tasks` script with the Git adapter, tested with parallel claims from two worktrees and two machines | The breakdown from the M1 run contains stories an engineer could start without asking a question | Built 2026-10-18; parallel claims pass in tests (two worktrees, and two clones of one remote standing in for two machines); met in the TripSplit dogfood run, 2026-10-18 (S-1 and S-9 name the commands, formulas, copy and tests an engineer needs) |
-| M3 | Engineer and reviewer roles; tdd-programming, review and verification skills; the build flow with acceptance; worktree isolation; integration order; the coach skill as its own entry point, with its signals, hooks and trials | The M1 idea's MVP is built and passes acceptance | Built 2026-10-18; needs a dogfood run |
+| M3 | Engineer and reviewer roles; tdd-programming, review and verification skills; the build flow with acceptance; worktree isolation; integration order; the coach skill as its own entry point, with its signals, hooks and trials | The M1 idea's MVP is built and passes acceptance | Built 2026-10-18; dogfooded 2026-10-19: 12 of TripSplit's 16 M1 stories built, reviewed, integrated and accepted before the run was stopped to save quota; the first coach retro landed two concept changes |
 | M4 | New-feature, feature-task, bug-fix and troubleshoot flows; debugging skill | Each flow completes on the product built in M3 | Built 2026-10-18; needs dogfood runs |
 | M5 | Understand and rewrite flows, with architect instances mapping a codebase in parallel | The understand flow produces a usable map of an existing open-source codebase | Built 2026-10-18; needs a dogfood run |
 

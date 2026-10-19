@@ -65,4 +65,4 @@ Draw a wireframe for each screen state the journeys depend on, including empty, 
 
 ### Step 4: Check against the bars
 
-Walk each journey as the customer would and check it: the next step is obvious; the frequent job is short; mistakes can be undone or recovered from; everything works by keyboard, has a visible focus and a text label, and never relies on colour alone. Check that each MVP promise in the PR/FAQ has a journey and that the architect agrees each one can be built as designed. Fix what fails before you report.
+Walk each journey as the customer would, once for each variant the requirements name (record type, data format, entry point, setup, order of concurrent changes), and check it: the next step is obvious; the frequent job is short; mistakes can be undone or recovered from; everything works by keyboard, has a visible focus and a text label, and never relies on colour alone. Check that each MVP promise in the PR/FAQ has a journey and that the architect agrees each one can be built as designed. Fix what fails before you report.

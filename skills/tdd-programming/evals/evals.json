@@ -1,0 +1,19 @@
+{
+  "skill_name": "tdd-programming",
+  "evals": [
+    {
+      "id": 1,
+      "name": "whole-domain-not-sample",
+      "prompt": "Write tests for a function that lays out a list row showing a person's display name next to an amount, so the row must never overflow a 320 px wide container. Names are free text up to 100 characters; amounts can be in any ISO 4217 currency up to the per-entry maximum. Write the test cases you would add.",
+      "expected_output": "Test inputs are chosen from the whole domain: the longest allowed name, an unbroken long word, the largest amount in a high-denomination currency and a currency with 0 and 3 decimals, rather than one short name and a small euro amount.",
+      "files": [],
+      "expectations": [
+        "Includes a case with a name at or near the 100-character limit",
+        "Includes a case with a single unbroken word longer than the line",
+        "Includes a case at the per-entry maximum amount, not only a typical amount",
+        "Covers more than one currency decimal class",
+        "Does not rely on one short sample name as the only name case"
+      ]
+    }
+  ]
+}

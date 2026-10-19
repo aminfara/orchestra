@@ -1,0 +1,18 @@
+{
+  "skill_name": "planning",
+  "evals": [
+    {
+      "id": 1,
+      "name": "whole-domain-not-sample",
+      "prompt": "Break this into stories: requirement A says every save (create, rename, add person, remove person, add expense, edit expense, delete expense) shows the same 'Saving / Saved / Not saved' states and asks for the device's person before the save if none is set. Requirement B says every screen meets the accessibility bar. The UX lists screens for each save. Write the stories with acceptance criteria.",
+      "expected_output": "The rules in A and B appear as acceptance criteria on every story that adds a save or a screen state, not only on the first story or the one whose journey names the rule.",
+      "files": [],
+      "expectations": [
+        "Every story that adds a save kind carries the save-states criterion",
+        "Every story that adds a save kind carries the ask-for-person criterion",
+        "Every story that adds a screen or a screen state carries the accessibility criterion",
+        "No story leaves a cross-cutting rule to be inferred from another story"
+      ]
+    }
+  ]
+}
