@@ -41,6 +41,10 @@ Write each brief with these parts, in plain prose or short labelled lines:
 - **Report.** The path to write the report to, under the run folder's `reports/`, named `<phase>-<role>-<activity>.md`.
 - **Ledger.** The ledger path, run ID, flow and phase, so the role can record findings when it checks or when the user's comments reach it.
 
+### Roles in a worktree
+
+The engineer and the reviewer run isolated in their own Git worktrees, at `<root>/.claude/worktrees/agent-<agent ID>`, and Claude Code refuses any write from a worktree into the project's own checkout, including the ledger and the run folder. Each of them therefore writes into an outbox in its worktree, `.orchestra/outbox/`, that mirrors `<root>/.orchestra/`. In their briefs, give every path under the run folder as its outbox path, relative to the worktree root (`.orchestra/outbox/<run>/reports/2-engineer-S-1.md`), and the ledger as `--outbox .orchestra/outbox` in place of `--ledger <path>`; inputs they only read keep their project paths. When the role stops, a hook copies its outbox into the project: ledger events into the ledger, files into run folders that exist. After an interruption, before you brief a fresh instance from the old one's notes, import its outbox yourself with `feedback.py import --ledger <ledger> --outbox <worktree>/.orchestra/outbox`. Before the first such dispatch in a project, add `.orchestra/outbox/` to `<root>/.git/info/exclude`, so no commit picks the outbox up.
+
 Parallel instances get briefs that differ for a reason. When two instances work at once, such as competitor researchers, each brief names its own subject and questions, so the answers cover different ground.
 
 ## Continue or start fresh

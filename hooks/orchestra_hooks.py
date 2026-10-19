@@ -9,9 +9,12 @@ Orchestra's hooks: the deterministic edge of the improvement loop.
                     It tells the user, never the agent, so no session carries
                     the improvement loop in its context.
 
-    subagent-stop   When an Orchestra role stops, check that it ended with a
-                    report or a verdict, and that every ledger ID a verdict
-                    cites was recorded. If not, send it back once with the
+    subagent-stop   When an Orchestra role stops, import the outbox of the
+                    worktree it was isolated in, if any: its ledger events
+                    and its run files, which such a role cannot write into
+                    the project itself.
+                    Then check that it ended with a report or a verdict, and
+                    that every ledger ID a verdict cites was recorded. If not, send it back once with the
                     reason. Then record the stop, with its status and the
                     tokens it used, as an agent event in the ledger.
 
@@ -69,7 +72,7 @@ def check(text: str, known: set[str]) -> str | None:
     if not m:
         return ("End with your report (or, if you were checking, your verdict) in the shape "
                 "your brief gives, starting with its Status or Verdict line, and write it to "
-                "the report path in your brief.")
+                "the report path in your brief, if it gives one.")
     cited = set(LEDGER_ID.findall(text))
     if missing := sorted(cited - known):
         return (f"Your verdict cites ledger IDs that are not in the feedback ledger: "
@@ -182,6 +185,20 @@ def known_ids(ledgers: list[Path]) -> set[str]:
     return {e["id"] for p in ledgers for e in feedback.read_ledger(p) if e["type"] == "finding"}
 
 
+def outboxes(payload: dict, root: Path) -> list[Path]:
+    """Outboxes of the worktree the stopped agent was isolated in, if it had one."""
+    worktrees = [root / ".claude" / "worktrees" / f"agent-{payload.get('agent_id')}"]
+    transcript = payload.get("agent_transcript_path")
+    if transcript:
+        meta = Path(transcript).with_suffix(".meta.json")
+        try:
+            worktrees.append(Path(json.loads(meta.read_text())["worktreePath"]))
+        except (OSError, ValueError, KeyError, TypeError):
+            pass
+    found = {w / ".orchestra" / "outbox" for w in worktrees}
+    return sorted(o for o in found if (o / "feedback.jsonl").is_file())
+
+
 def project_root(payload: dict, env: dict) -> Path:
     return Path(env.get("CLAUDE_PROJECT_DIR") or payload.get("cwd") or os.getcwd())
 
@@ -215,12 +232,16 @@ def subagent_stop(payload: dict, env: dict) -> dict | None:
     if not agent_type.startswith("orchestra:"):
         return None
     text = final_text(payload)
-    ledgers = run_ledgers(project_root(payload, env))
+    root = project_root(payload, env)
+    ledgers = run_ledgers(root)
+    ledger = choose_ledger(text, ledgers)
+    if ledger:
+        for outbox in outboxes(payload, root):
+            feedback.import_outbox(ledger, outbox)
     if not payload.get("stop_hook_active"):
         reason = check(text, known_ids(ledgers))
         if reason:
             return {"decision": "block", "reason": reason}
-    ledger = choose_ledger(text, ledgers)
     if ledger:
         path = payload.get("agent_transcript_path")
         used = usage(Path(path)) if path else {}

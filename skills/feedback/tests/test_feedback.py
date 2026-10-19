@@ -339,5 +339,92 @@ class AgentEventsTest(unittest.TestCase):
                               "peak_context": 120, "statuses": {"done": 1, "blocked": 1}})
 
 
+class OutboxTest(unittest.TestCase):
+    """A role isolated in a worktree cannot write the project's ledger, so it records
+    into an outbox in its worktree, and the main session imports the outbox."""
+
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory()
+        base = Path(self.tmp.name)
+        self.ledger = str(base / "project" / ".orchestra" / "feedback.jsonl")
+        self.outbox = str(base / "worktree" / ".orchestra" / "outbox")
+
+    def tearDown(self) -> None:
+        self.tmp.cleanup()
+
+    def record(self, *target: str) -> dict:
+        code, out = run("record", *target, "--run", "2026-10-20-build-trip", "--flow", "build",
+                        "--phase", "2", "--artifact", "story/S-1", "--role", "engineer",
+                        "--skill", "none", "--model", "sonnet", "--effort", "medium",
+                        "--found-by", "reviewer", "--category", "gap", "--severity", "medium",
+                        "--finding", "No test for the empty list.", "--why", "Tested one case.")
+        self.assertEqual(code, 0, out)
+        return out
+
+    def events(self, path: str) -> list[dict]:
+        return [json.loads(line) for line in Path(path).read_text().splitlines()]
+
+    def test_record_into_outbox_keeps_it_out_of_git(self) -> None:
+        out = self.record("--outbox", self.outbox)
+        self.assertEqual(self.events(self.outbox + "/feedback.jsonl")[0]["id"], out["id"])
+        self.assertEqual((Path(self.outbox) / ".gitignore").read_text().strip(), "*")
+        self.assertFalse(Path(self.ledger).exists())
+
+    def test_resolve_into_outbox_accepts_a_finding_only_the_ledger_holds(self) -> None:
+        fid = self.record("--ledger", self.ledger)["id"]
+        code, out = run("resolve", "--outbox", self.outbox, "--id", fid, "--outcome", "fixed")
+        self.assertEqual((code, out), (0, {"id": fid, "outcome": "fixed"}))
+
+    def test_resolve_into_outbox_rejects_a_malformed_id(self) -> None:
+        code, err = run("resolve", "--outbox", self.outbox, "--id", "S-12", "--outcome", "fixed")
+        self.assertEqual((code, err["error"]), (1, "InvalidValue"))
+
+    def test_import_appends_new_events_once(self) -> None:
+        old = self.record("--ledger", self.ledger)["id"]
+        new = self.record("--outbox", self.outbox)["id"]
+        run("resolve", "--outbox", self.outbox, "--id", old, "--outcome", "fixed")
+        code, out = run("import", "--ledger", self.ledger, "--outbox", self.outbox)
+        self.assertEqual((code, out), (0, {"imported": 2, "unknown": [], "files": []}))
+        _, again = run("import", "--ledger", self.ledger, "--outbox", self.outbox)
+        self.assertEqual(again, {"imported": 0, "unknown": [], "files": []})
+        events = self.events(self.ledger)
+        self.assertEqual([e.get("id") or e.get("finding") for e in events], [old, new, old])
+
+    def test_import_skips_an_outcome_for_an_unknown_finding(self) -> None:
+        run("resolve", "--outbox", self.outbox, "--id", "f-0000beef", "--outcome", "fixed")
+        code, out = run("import", "--ledger", self.ledger, "--outbox", self.outbox)
+        self.assertEqual((code, out), (0, {"imported": 0, "unknown": ["f-0000beef"], "files": []}))
+
+    def test_import_of_a_missing_outbox_imports_nothing(self) -> None:
+        code, out = run("import", "--ledger", self.ledger, "--outbox", self.outbox)
+        self.assertEqual((code, out), (0, {"imported": 0, "unknown": [], "files": []}))
+
+    def write(self, rel: str, text: str) -> None:
+        path = Path(self.outbox) / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(text)
+
+    def test_import_copies_run_files_into_their_run_folder_once(self) -> None:
+        run_dir = Path(self.ledger).parent / "2026-10-20-build-trip"
+        run_dir.mkdir(parents=True)
+        self.write("2026-10-20-build-trip/notes/engineer-S-1.md", "Done: tests.")
+        _, out = run("import", "--ledger", self.ledger, "--outbox", self.outbox)
+        self.assertEqual(out["files"], ["2026-10-20-build-trip/notes/engineer-S-1.md"])
+        self.assertEqual((run_dir / "notes" / "engineer-S-1.md").read_text(), "Done: tests.")
+        _, again = run("import", "--ledger", self.ledger, "--outbox", self.outbox)
+        self.assertEqual(again["files"], [])
+        self.write("2026-10-20-build-trip/notes/engineer-S-1.md", "Done: tests, code.")
+        _, changed = run("import", "--ledger", self.ledger, "--outbox", self.outbox)
+        self.assertEqual(changed["files"], ["2026-10-20-build-trip/notes/engineer-S-1.md"])
+
+    def test_import_copies_nothing_outside_an_existing_run_folder(self) -> None:
+        Path(self.ledger).parent.mkdir(parents=True)
+        self.write("2026-10-20-no-such-run/notes/x.md", "x")
+        self.write("config.toml", "[review]")
+        _, out = run("import", "--ledger", self.ledger, "--outbox", self.outbox)
+        self.assertEqual(out["files"], [])
+        self.assertFalse((Path(self.ledger).parent / "config.toml").exists())
+
+
 if __name__ == "__main__":
     unittest.main()

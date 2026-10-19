@@ -21,6 +21,7 @@ Usage:
                           --category CATEGORY --severity SEVERITY
                           --finding TEXT --why TEXT
     feedback.py resolve   --ledger PATH --id ID --outcome OUTCOME [--note TEXT]
+    feedback.py import    --ledger PATH --outbox DIR
     feedback.py cost      --ledger PATH --run RUN --phase N --role ROLE
                           [--rounds N] [--tokens N]
     feedback.py agent     --ledger PATH --role ROLE --agent-id ID --status S
@@ -35,6 +36,15 @@ Usage:
     feedback.py decide    --ledger PATH... --id ID --decision DECISION [--note TEXT]
     feedback.py proposals --ledger PATH... [--status STATUS]
     feedback.py retro     --ledger PATH... [--note TEXT]
+
+A role isolated in a Git worktree cannot write the project's ledger, so it
+passes --outbox DIR instead of --ledger to record and resolve: the events go to
+DIR/feedback.jsonl, which a .gitignore keeps out of the role's commits, and
+resolve checks only the ID's shape. The outbox mirrors the project's .orchestra
+folder, so the role writes its notes, report and run artifacts there too, as
+DIR/<run>/notes/... and so on. `import` appends the outbox's new events to the
+ledger and copies its files into run folders that exist; the SubagentStop hook
+runs it when the role stops, and it is safe to run again.
 
 Commands marked PATH... accept --ledger more than once, to read or write
 several projects' ledgers together; --registry FILE adds every ledger listed
@@ -51,6 +61,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 import tomllib
 import uuid
@@ -113,6 +124,9 @@ class UnknownFinding(LedgerError):
 
 class UnknownProposal(LedgerError):
     name = "UnknownProposal"
+
+
+FINDING_ID = re.compile(r"^f-[0-9a-f]{8}$")
 
 
 @dataclass(frozen=True)
@@ -341,9 +355,67 @@ def compute_signals(v: View, config: dict) -> list[dict]:
 
 
 def single(args: argparse.Namespace) -> Path:
+    if getattr(args, "outbox", None):
+        return outbox_ledger(args.outbox)
     if len(args.ledgers) != 1:
         raise InvalidValue(f"'{args.command}' writes to exactly one ledger")
     return args.ledgers[0]
+
+
+def outbox_ledger(outbox: Path) -> Path:
+    """The outbox's ledger file, with the outbox kept out of Git."""
+    outbox.mkdir(parents=True, exist_ok=True)
+    ignore = outbox / ".gitignore"
+    if not ignore.exists():
+        ignore.write_text("*\n")
+    return outbox / "feedback.jsonl"
+
+
+def import_outbox(ledger: Path, outbox: Path) -> dict:
+    """Append the outbox's events that the ledger lacks, and copy its run files over.
+
+    An outbox mirrors the project's .orchestra folder: <outbox>/<run>/notes/x.md
+    lands at <ledger's folder>/<run>/notes/x.md, but only in a run folder that
+    already exists. Outcomes for findings that neither side holds are skipped.
+    """
+    return {**import_events(ledger, outbox), "files": import_files(ledger.parent, outbox)}
+
+
+def import_files(orchestra: Path, outbox: Path) -> list[str]:
+    copied = []
+    if not outbox.is_dir():
+        return copied
+    for src in sorted(p for p in outbox.rglob("*") if p.is_file()):
+        rel = src.relative_to(outbox)
+        if len(rel.parts) < 2 or not (orchestra / rel.parts[0]).is_dir():
+            continue
+        dest = orchestra / rel
+        data = src.read_bytes()
+        if dest.is_file() and dest.read_bytes() == data:
+            continue
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes(data)
+        copied.append(rel.as_posix())
+    return copied
+
+
+def import_events(ledger: Path, outbox: Path) -> dict:
+    events = read_ledger(ledger)
+    seen = {json.dumps(e, sort_keys=True) for e in events}
+    known = {e["id"] for e in events if e["type"] == "finding"}
+    incoming = read_ledger(outbox / "feedback.jsonl")
+    known |= {e["id"] for e in incoming if e["type"] == "finding"}
+    imported, unknown = 0, []
+    for e in incoming:
+        if json.dumps(e, sort_keys=True) in seen:
+            continue
+        if e["type"] == "outcome" and e["finding"] not in known:
+            unknown.append(e["finding"])
+            continue
+        append_event(ledger, e)
+        seen.add(json.dumps(e, sort_keys=True))
+        imported += 1
+    return {"imported": imported, "unknown": unknown}
 
 
 def cmd_record(args: argparse.Namespace) -> dict:
@@ -373,16 +445,26 @@ def cmd_record(args: argparse.Namespace) -> dict:
 
 
 def cmd_resolve(args: argparse.Namespace) -> dict:
-    ledger = single(args)
     outcome = choice(args.outcome, OUTCOMES, "outcome")
-    known = {e["id"] for e in read_ledger(ledger) if e["type"] == "finding"}
-    if args.id not in known:
-        raise UnknownFinding(f"no finding with id '{args.id}' in {ledger}")
+    if args.outbox:
+        if not FINDING_ID.match(args.id):
+            raise InvalidValue(f"'{args.id}' is not a finding ID such as f-0123abcd")
+    else:
+        known = {e["id"] for e in read_ledger(single(args)) if e["type"] == "finding"}
+        if args.id not in known:
+            raise UnknownFinding(f"no finding with id '{args.id}' in {single(args)}")
+    ledger = single(args)
     append_event(ledger, {
         "type": "outcome", "ts": now(), "finding": args.id,
         "outcome": outcome, "note": args.note,
     })
     return {"id": args.id, "outcome": outcome}
+
+
+def cmd_import(args: argparse.Namespace) -> dict:
+    if len(args.ledgers) != 1:
+        raise InvalidValue("'import' writes to exactly one ledger")
+    return import_outbox(args.ledgers[0], args.outbox)
 
 
 def cmd_cost(args: argparse.Namespace) -> dict:
@@ -552,11 +634,16 @@ def build_parser() -> argparse.ArgumentParser:
                  "found-by", "category", "severity", "finding", "why"):
         r.add_argument(f"--{flag}", required=True)
     r.add_argument("--phase", type=int, required=True)
+    r.add_argument("--outbox", type=Path)
 
     s = command("resolve", cmd_resolve)
     s.add_argument("--id", required=True)
     s.add_argument("--outcome", required=True)
     s.add_argument("--note")
+    s.add_argument("--outbox", type=Path)
+
+    i = command("import", cmd_import)
+    i.add_argument("--outbox", type=Path, required=True)
 
     c = command("cost", cmd_cost)
     c.add_argument("--run", required=True)
@@ -611,7 +698,7 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.registry:
             args.ledgers = [*args.ledgers, *read_registry(args.registry)]
-        if not args.ledgers:
+        if not args.ledgers and not getattr(args, "outbox", None):
             raise InvalidValue("give at least one --ledger, or a --registry that lists some")
         result = args.fn(args)
     except LedgerError as e:

@@ -67,6 +67,8 @@ python3 ${CLAUDE_SKILL_DIR}/scripts/feedback.py record --ledger <ledger> \
   --finding "<what is wrong, where>" --why "<what the author seems to have missed>"
 ```
 
+If you run isolated in a Git worktree and your brief gives `--outbox .orchestra/outbox` instead of a ledger path, pass that in place of `--ledger` to `record` and `resolve`; a hook moves the events into the project's ledger when you stop.
+
 Name the craft skill as `research` or `orchestra:research`, or `none` when no skill applies. `--found-by` is your role when you are a checker or reviewer, `acceptance` when you find the problem while running acceptance on a built product, and `user` for the user's comments; the last two mark findings that got past the earlier checks. When the findings are the user's comments on your own work, record each comment as the user made it, with `--found-by user`; there is no artifact to check first. When you check a revision, resolve each finding your brief lists, yours or the user's, that the revision fixed, with `resolve --ledger <ledger> --id <id> --outcome fixed`; findings it did not fix stay open. When the user defers or overrides a finding at a gate, the conductor resolves it as `deferred` or `overridden`.
 
 ### Step 3: Return the verdict

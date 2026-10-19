@@ -184,6 +184,34 @@ class SubagentStopTest(unittest.TestCase):
             self.assertEqual((agent["type"], agent["role"], agent["status"]),
                              ("agent", "reviewer", "verdict: revise"))
 
+    def test_findings_in_a_worktree_outbox_reach_the_ledger_before_the_check(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = project(tmp)
+            outbox = root / ".claude" / "worktrees" / "agent-a1" / ".orchestra" / "outbox"
+            outbox.mkdir(parents=True)
+            (outbox / "feedback.jsonl").write_text(json.dumps(finding("f-0000abcd")) + "\n")
+            out = hooks.subagent_stop(self.payload(verdict("revise")),
+                                      {"CLAUDE_PROJECT_DIR": str(root)})
+            self.assertIsNone(out)
+            types = [(e["type"], e.get("id")) for e in self.ledger_events(root)]
+            self.assertEqual(types, [("finding", "f-0000abcd"), ("agent", None)])
+
+    def test_outbox_is_found_from_the_transcript_metadata(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = project(tmp)
+            worktree = Path(tmp) / "elsewhere"
+            (worktree / ".orchestra" / "outbox").mkdir(parents=True)
+            (worktree / ".orchestra" / "outbox" / "feedback.jsonl").write_text(
+                json.dumps(finding("f-0000abcd")) + "\n")
+            transcript = Path(tmp) / "agent-a1.jsonl"
+            transcript.write_text("")
+            (Path(tmp) / "agent-a1.meta.json").write_text(json.dumps({"worktreePath": str(worktree)}))
+            out = hooks.subagent_stop(
+                self.payload(verdict("revise"), agent_transcript_path=str(transcript)),
+                {"CLAUDE_PROJECT_DIR": str(root)})
+            self.assertIsNone(out)
+            self.assertEqual(self.ledger_events(root)[0]["id"], "f-0000abcd")
+
     def test_first_stop_in_a_run_starts_the_ledger(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp) / "project"
