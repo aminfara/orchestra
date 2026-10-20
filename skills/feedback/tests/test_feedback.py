@@ -339,6 +339,22 @@ class AgentEventsTest(unittest.TestCase):
                               "peak_context": 120, "statuses": {"done": 1, "blocked": 1}})
 
 
+class MalformedLedgerTest(unittest.TestCase):
+    """An agent that appends to the ledger by hand must not break every reader."""
+
+    def test_lines_that_are_not_events_are_skipped_and_counted(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            ledger = Path(tmp) / "feedback.jsonl"
+            good = {"type": "run", "ts": "2026-10-20T00:00:00+00:00", "run": "r",
+                    "flow": "bug-fix", "outcome": "complete"}
+            ledger.write_text(json.dumps(good) + "\n"
+                              + '{"run": "r", "note": "fixed it; no findings"}\n'
+                              + "not json\n")
+            self.assertEqual(feedback.read_ledger(ledger), [good])
+            code, out = run("count", "--ledger", str(ledger))
+            self.assertEqual((code, out["malformed"]), (0, 2))
+
+
 class OutboxTest(unittest.TestCase):
     """A role isolated in a worktree cannot write the project's ledger, so it records
     into an outbox in its worktree, and the main session imports the outbox."""
@@ -384,20 +400,27 @@ class OutboxTest(unittest.TestCase):
         new = self.record("--outbox", self.outbox)["id"]
         run("resolve", "--outbox", self.outbox, "--id", old, "--outcome", "fixed")
         code, out = run("import", "--ledger", self.ledger, "--outbox", self.outbox)
-        self.assertEqual((code, out), (0, {"imported": 2, "unknown": [], "files": []}))
+        self.assertEqual((code, out), (0, {"imported": 2, "unknown": [], "files": [], "malformed": 0}))
         _, again = run("import", "--ledger", self.ledger, "--outbox", self.outbox)
-        self.assertEqual(again, {"imported": 0, "unknown": [], "files": []})
+        self.assertEqual(again, {"imported": 0, "unknown": [], "files": [], "malformed": 0})
         events = self.events(self.ledger)
         self.assertEqual([e.get("id") or e.get("finding") for e in events], [old, new, old])
 
     def test_import_skips_an_outcome_for_an_unknown_finding(self) -> None:
         run("resolve", "--outbox", self.outbox, "--id", "f-0000beef", "--outcome", "fixed")
         code, out = run("import", "--ledger", self.ledger, "--outbox", self.outbox)
-        self.assertEqual((code, out), (0, {"imported": 0, "unknown": ["f-0000beef"], "files": []}))
+        self.assertEqual((code, out), (0, {"imported": 0, "unknown": ["f-0000beef"], "files": [], "malformed": 0}))
 
     def test_import_of_a_missing_outbox_imports_nothing(self) -> None:
         code, out = run("import", "--ledger", self.ledger, "--outbox", self.outbox)
-        self.assertEqual((code, out), (0, {"imported": 0, "unknown": [], "files": []}))
+        self.assertEqual((code, out), (0, {"imported": 0, "unknown": [], "files": [], "malformed": 0}))
+
+    def test_import_leaves_out_lines_that_are_not_events(self) -> None:
+        self.record("--outbox", self.outbox)
+        with open(Path(self.outbox) / "feedback.jsonl", "a") as f:
+            f.write('{"run": "x", "note": "fixed it; no findings"}\n')
+        _, out = run("import", "--ledger", self.ledger, "--outbox", self.outbox)
+        self.assertEqual((out["imported"], out["malformed"]), (1, 1))
 
     def write(self, rel: str, text: str) -> None:
         path = Path(self.outbox) / rel

@@ -163,10 +163,34 @@ def choice(value: str, allowed: tuple[str, ...], field: str) -> str:
 
 
 def read_ledger(ledger: Path) -> list[dict]:
+    """The ledger's events, leaving out lines that are not events (see read_lines)."""
+    return read_lines(ledger)[0]
+
+
+def read_lines(ledger: Path) -> tuple[list[dict], int]:
+    """Return the events and the number of lines that are not events.
+
+    Only this script should write a ledger, but an agent can append a line by
+    hand. Such a line must not break every reader, so it is skipped, and
+    `count` reports how many were skipped.
+    """
     if not ledger.exists():
-        return []
+        return [], 0
+    events, malformed = [], 0
     with ledger.open(encoding="utf-8") as f:
-        return [json.loads(line) for line in f if line.strip()]
+        for line in f:
+            if not line.strip():
+                continue
+            try:
+                e = json.loads(line)
+            except json.JSONDecodeError:
+                malformed += 1
+                continue
+            if isinstance(e, dict) and isinstance(e.get("type"), str) and isinstance(e.get("ts"), str):
+                events.append(e)
+            else:
+                malformed += 1
+    return events, malformed
 
 
 def append_event(ledger: Path, event: dict) -> None:
@@ -204,13 +228,16 @@ class View:
     events: list[dict]
     recent: list[dict]
     last_retro: str | None
+    malformed: int = 0
 
 
 def view(ledgers: list[Path]) -> View:
-    per_ledger = [read_ledger(p) for p in ledgers]
+    read = [read_lines(p) for p in ledgers]
+    per_ledger = [evs for evs, _ in read]
     windows = [since_last_retro(evs) for evs in per_ledger]
     retros = [ts for _, ts in windows if ts]
-    return View(merge(per_ledger), merge([w for w, _ in windows]), max(retros, default=None))
+    return View(merge(per_ledger), merge([w for w, _ in windows]), max(retros, default=None),
+                sum(n for _, n in read))
 
 
 def findings_with_outcomes(events: list[dict]) -> list[dict]:
@@ -378,7 +405,9 @@ def import_outbox(ledger: Path, outbox: Path) -> dict:
     lands at <ledger's folder>/<run>/notes/x.md, but only in a run folder that
     already exists. Outcomes for findings that neither side holds are skipped.
     """
-    return {**import_events(ledger, outbox), "files": import_files(ledger.parent, outbox)}
+    events = import_events(ledger, outbox)
+    return {"imported": events["imported"], "unknown": events["unknown"],
+            "files": import_files(ledger.parent, outbox), "malformed": events["malformed"]}
 
 
 def import_files(orchestra: Path, outbox: Path) -> list[str]:
@@ -403,7 +432,7 @@ def import_events(ledger: Path, outbox: Path) -> dict:
     events = read_ledger(ledger)
     seen = {json.dumps(e, sort_keys=True) for e in events}
     known = {e["id"] for e in events if e["type"] == "finding"}
-    incoming = read_ledger(outbox / "feedback.jsonl")
+    incoming, malformed = read_lines(outbox / "feedback.jsonl")
     known |= {e["id"] for e in incoming if e["type"] == "finding"}
     imported, unknown = 0, []
     for e in incoming:
@@ -415,7 +444,7 @@ def import_events(ledger: Path, outbox: Path) -> dict:
         append_event(ledger, e)
         seen.add(json.dumps(e, sort_keys=True))
         imported += 1
-    return {"imported": imported, "unknown": unknown}
+    return {"imported": imported, "unknown": unknown, "malformed": malformed}
 
 
 def cmd_record(args: argparse.Namespace) -> dict:
@@ -491,6 +520,7 @@ def count(v: View) -> dict:
         "open": sum(1 for f in findings if f["outcome"] == "open"),
         "since_retro": sum(1 for e in v.recent if e["type"] == "finding"),
         "last_retro": v.last_retro,
+        "malformed": v.malformed,
     }
 
 
