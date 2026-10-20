@@ -1,6 +1,6 @@
 # Orchestra plan
 
-A Claude Code plugin that runs a team of agents through software engineering flows. Draft, 2026-10-14, with the decisions made with Ali that day; updated 2026-10-18 when M2 to M5 were built.
+A Claude Code plugin that runs a team of agents through software engineering flows. Draft, 2026-10-14, with the decisions made with Ali that day; updated 2026-10-18 when M2 to M5 were built, and 2026-10-20 when every flow had had a dogfood run.
 
 ## Summary
 
@@ -44,6 +44,7 @@ Each note covers one part and can be read on its own.
 - [Feedback loop](feedback-loop.md): how findings become concepts, tools or project notes, and how Orchestra gets leaner and cheaper.
 - [M1 sessions](m1-sessions.md): how the overseer and dogfood sessions share work, and the prompt to start each.
 - [Dogfood run, 2026-10-18](dogfood-2026-10-18.md): TripSplit from idea to a partly built, accepted milestone and the first coach retro, what it exposed and what changed.
+- [Dogfood runs, 2026-10-20](dogfood-2026-10-20.md): the feature-task, understand, rewrite and new-feature flows on TripSplit and Click, the outbox for worktree agents, and what the runs cost.
 
 ## Plugin layout
 
@@ -79,8 +80,8 @@ The repo already keeps skills under `skills/`, which is the plugin layout. Turni
 | M1 | Plugin manifest; conductor with its references; idea, requirements and architecture flows up to the approved architecture; product manager and architect roles, with instances resumed across phases; briefing, research, feasibility, estimation, ux-design and architecture skills; the feedback skill and ledger, with checkers recording from the first run; five spikes, run first (see below) | One dogfood run on the collaborative todo app reaches an approved architecture, every gate holds, the conductor never opens an artifact, a reader who was not in the session can follow each artifact, the artifacts compare favorably with a single-agent baseline on the same idea, and a coach retro run by hand turns the ledger into proposals you can judge | Done, per Ali, 2026-10-18 |
 | M2 | The architecture flow's breakdown phase, the planning skill, the breakdown gate, and the `tasks` script with the Git adapter, tested with parallel claims from two worktrees and two machines | The breakdown from the M1 run contains stories an engineer could start without asking a question | Built 2026-10-18; parallel claims pass in tests (two worktrees, and two clones of one remote standing in for two machines); met in the TripSplit dogfood run, 2026-10-18 (S-1 and S-9 name the commands, formulas, copy and tests an engineer needs) |
 | M3 | Engineer and reviewer roles; tdd-programming, review and verification skills; the build flow with acceptance; worktree isolation; integration order; the coach skill as its own entry point, with its signals, hooks and trials | The M1 idea's MVP is built and passes acceptance | Built 2026-10-18; dogfooded 2026-10-19: 12 of TripSplit's 16 M1 stories built, reviewed, integrated and accepted before the run was stopped to save quota; the first coach retro landed two concept changes |
-| M4 | New-feature, feature-task, bug-fix and troubleshoot flows; debugging skill | Each flow completes on the product built in M3 | Built 2026-10-18; bug-fix and troubleshoot dogfooded on TripSplit 2026-10-19; new-feature and feature-task need runs |
-| M5 | Understand and rewrite flows, with architect instances mapping a codebase in parallel | The understand flow produces a usable map of an existing open-source codebase | Built 2026-10-18; needs a dogfood run |
+| M4 | New-feature, feature-task, bug-fix and troubleshoot flows; debugging skill | Each flow completes on the product built in M3 | Built 2026-10-18; bug-fix and troubleshoot dogfooded on TripSplit 2026-10-19; feature-task and new-feature (through its architecture flow's breakdown) dogfooded 2026-10-20 |
+| M5 | Understand and rewrite flows, with architect instances mapping a codebase in parallel | The understand flow produces a usable map of an existing open-source codebase | Built 2026-10-18; dogfooded on Click 8.5.0 2026-10-20: the understand flow mapped the codebase with five area architects in parallel, and the rewrite flow built 11 of its 18 parser stories before it was stopped short of parity acceptance |
 
 "Built" means the skills, agents, flows, scripts and hooks exist, every SKILL.md passes skill-linter, and the scripts' tests pass. Each milestone's done-when criterion still needs its dogfood run, and those runs feed the coach its first real ledger.
 
@@ -159,8 +160,14 @@ Made on 2026-10-18 after the first full dogfood run ([notes](dogfood-2026-10-18.
 - **Continuity has a price:** a resumed instance re-reads its context on every call and pays for all of it again after a long pause, so the conductor resumes within a run while an instance is lean, and otherwise starts a fresh one from its notes.
 - **Roles leave a trail:** authoring roles write as they go and keep their notes current after each major step, so an interruption loses at most one step.
 
+Made on 2026-10-20 during the remaining dogfood runs ([notes](dogfood-2026-10-20.md)):
+
+- **Worktree agents write to an outbox:** Claude Code refuses writes from a worktree-isolated agent into the project's checkout, so engineers and reviewers write their notes, reports, artifacts and ledger events into `.orchestra/outbox/` in their own worktree, and the subagent-stop hook copies them into the project.
+- **Runs clear their worktrees:** the conductor removes the worktrees a run used when it closes, without forcing, so Git keeps the branches and any uncommitted work.
+- **Dogfood a flow, not a product:** a dogfood run stops once its flow-specific phases have run, rather than building the product to the end, when the rest repeats a flow that already has a run.
+
 ## Open questions
 
 1. **Single-agent baseline for the build.** M1 compared artifacts with a single agent. No comparison yet exists for the build flow, where the evidence says multi-agent setups most often lose (see the [multi-agent frameworks note](../../research/prior-art/multi-agent-frameworks.md)). The first M3 dogfood run should build one milestone twice, once with the build flow and once with one agent and the same skills, before parallel engineers become the default.
 2. **Cost.** The first full dogfood run spent most of a 5-hour Pro window per two phases with every role but the engineer on Opus at high effort. The fixes above cut the cost of continuity; whether checkers can drop to a cheaper model or a lighter effort is for a coach trial once the ledger shows a clean streak.
-3. **Hook behaviour in a long run.** A headless session on 2026-10-18 confirmed the hooks with the plugin loaded by `--plugin-dir`: the session-start hook showed its one-line message for a ledger with a due signal; the subagent-stop hook saw the reviewer as `orchestra:reviewer`, sent back a bare reply once and got a verdict on the second stop, and recorded each stop with its token count from the transcript. In the TripSplit dogfood run, the hook recorded 31 stops from 10 instances, and no send-back appears in the transcripts. Untested: a report handed back through the `SubagentHandback` tool.
+3. **Hook behaviour in a long run.** A headless session on 2026-10-18 confirmed the hooks with the plugin loaded by `--plugin-dir`: the session-start hook showed its one-line message for a ledger with a due signal; the subagent-stop hook saw the reviewer as `orchestra:reviewer`, sent back a bare reply once and got a verdict on the second stop, and recorded each stop with its token count from the transcript. In the TripSplit dogfood run, the hook recorded 31 stops from 10 instances, and no send-back appears in the transcripts. On 2026-10-20, Click's agents handed reports back through the `SubagentHandback` tool 158 times, and the hook recorded a status for each of the 94 stops it saw, none of them unknown.

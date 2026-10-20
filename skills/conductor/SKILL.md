@@ -61,7 +61,7 @@ After each phase, update the run log with the phase's status, the report summari
 
 ### Step 3: Close the run
 
-When the flow's last phase is approved or the user stops the flow, record the outcome in the run log. Then run `python3 ${CLAUDE_PLUGIN_ROOT}/skills/feedback/scripts/feedback.py close-run --ledger <root>/.orchestra/feedback.jsonl --run <run ID> --flow <flow> --outcome <complete, stopped, parked or dropped>`. It records the run and returns the ledger's signals. If any are due, tell the user in a sentence or two what they are and that `orchestra:coach`, started in a separate session, acts on them. Do not run a retro yourself, and do not act on a signal mid-flow.
+When the flow's last phase is approved or the user stops the flow, record the outcome in the run log. Clear away the worktrees this run's roles used, so they do not pile up across runs: import each one's outbox (`briefing-roles.md`, "Roles in a worktree"), then `git worktree remove` it without `--force`. Its branch stays, and Git refuses a worktree with uncommitted work; leave that one and name it in the log. Then run `python3 ${CLAUDE_PLUGIN_ROOT}/skills/feedback/scripts/feedback.py close-run --ledger <root>/.orchestra/feedback.jsonl --run <run ID> --flow <flow> --outcome <complete, stopped, parked or dropped>`. It records the run and returns the ledger's signals. If any are due, tell the user in a sentence or two what they are and that `orchestra:coach`, started in a separate session, acts on them. Do not run a retro yourself, and do not act on a signal mid-flow.
 
 ## Reference files
 
