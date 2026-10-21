@@ -60,6 +60,8 @@ List the decisions the design needs and mark each as a one-way or a two-way door
 
 Where a decision rests on an assumption you cannot confirm from documentation, such as whether a sync library handles concurrent edits the way the design needs, test it with a throwaway prototype in a scratch folder outside the product. Record what the spike showed in the ADR, and delete the prototype.
 
+Claims about existing code carry the same risk, because a claim is as wide as the evidence behind it. Find what feeds a behaviour and what reads it by following data and calls, not module names, imports or the nearest line; cite the line that makes the claim true, and probe the paths you did not read before generalising from the one you did.
+
 ### Step 4: Write the docs
 
 Write the architecture doc, the glossary and the ADRs. Trace each selected requirement to the parts that deliver it, check the design against the PRD's remaining requirements and note where it would have to change to carry them, so the next feature extends the system instead of reworking it, and use the glossary's terms from the approved UX design. If the design cannot deliver a journey, report it as a finding instead of changing the UX. Before you report, read the architecture doc as an engineer about to start work would, and fill each gap that would force a question.

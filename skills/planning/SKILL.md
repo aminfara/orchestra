@@ -29,7 +29,7 @@ A good breakdown lets any engineer pick up any ready story, read its acceptance 
 ## Constraints
 
 - **Slice vertically.** A story delivers one observable behaviour end to end, however thin, rather than one layer of many behaviours.
-- **Acceptance criteria are checkable from outside.** Each one states what a user or caller observes, traced to a requirement's definition of done. A rule that covers every save, screen or milestone becomes a criterion on every story that adds one.
+- **Acceptance criteria are checkable from outside.** Each one states what a user or caller observes, traced to a requirement's definition of done. A rule that covers every save, screen, file or commit becomes a criterion on every story it covers, and a contract one story owes another is a criterion on the story that owes it, not a note.
 - **Add an edge only for a real dependency.** A story is blocked when it needs another's interface or data, or when both would change the same files; otherwise let them run in parallel.
 - **Leave the how to the engineer.** Point to the architecture section, ADR or UX screen a story builds on instead of restating it.
 
@@ -47,7 +47,7 @@ A good breakdown lets any engineer pick up any ready story, read its acceptance 
 
 ### Step 1: Find the slices
 
-From the selected requirements, the architecture and the UX journeys, find the thinnest path through the system that a user could see work, and make it the first story: it proves the parts connect. Then add stories that each extend a journey or deliver one more requirement. Group them into features by the requirement or journey they serve. Work that only some stories need, such as a schema or a shared component, belongs inside the first story that needs it, not in a horizontal story of its own. Wide changes to existing code go expand, migrate, contract, each step its own story.
+From the selected requirements, the architecture and the UX journeys, find the thinnest path through the system that a user could see work, and make it the first story: it proves the parts connect. Then add stories that each extend a journey or deliver one more requirement. Group them into features by the requirement or journey they serve. Work that only some stories need, such as a schema or a shared component, belongs inside the first story that needs it, not in a horizontal story of its own; its criteria come from every story that will use it, so the later ones build on it without reopening it. Wide changes to existing code go expand, migrate, contract, each step its own story, and the contract story names what still uses the code it removes, tests included.
 
 ### Step 2: Size each story to one context
 
@@ -63,4 +63,4 @@ Create features, then stories in dependency order, with the `orchestra:tasks` sk
 
 ### Step 5: Plan a story, when you are the engineer
 
-Read the story, its acceptance criteria and the docs it points to. Most stories need no tasks: build them. Split into tasks under the story only when the work has separable steps worth tracking, such as a migration before a behaviour change, or when you expect your context to fill before you finish, so a fresh instance could continue from the board.
+Read the story, its acceptance criteria, the docs it points to, and the criteria of the stories that build on it. Most stories need no tasks: build them. Split into tasks under the story only when the work has separable steps worth tracking, such as a migration before a behaviour change, or when you expect your context to fill before you finish, so a fresh instance could continue from the board.
