@@ -1,6 +1,6 @@
 {
-  "name": "orchestra-local",
-  "description": "Local development marketplace for the Orchestra plugin, served from this repo's main checkout",
+  "name": "orchestra",
+  "description": "Ali's personal skills: programming principles, a writing studio, and a skill linter",
   "owner": {
     "name": "Ali Aminfar"
   },
@@ -8,7 +8,7 @@
     {
       "name": "orchestra",
       "source": "./",
-      "description": "A conductor and a small team of agent roles that run software engineering flows"
+      "description": "Three skills: programming (test-first code and testing principles), writing-studio, and skill-linter"
     }
   ]
 }
