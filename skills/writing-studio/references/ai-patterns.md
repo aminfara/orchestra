@@ -30,21 +30,27 @@ LLMs reach for the em-dash constantly, and a document peppered with them is a st
 
 The reflexive triad ("clear, concise, and compelling") and balanced-but-empty parallelism. Use three items only when there are genuinely three; vary list lengths.
 
-## 5. "Not only X, but also Y" / "It's not just A, it's B"
+## 5. Binary contrasts
 
-The escalation cliché. State the point directly: "It's not just a tool, it's a platform" → say what it is.
+Knocking down a claim nobody made so the real one lands harder: *not only X, but also Y; it's not just A, it's B; the question isn't X, it's Y*, and the negative list "Not a tool. Not a framework. A platform." State the point directly: "The question isn't the model, it's the eval" → "The eval matters more than the model."
 
 ## 6. Hedge-and-throat-clearing openers
 
 *It's worth noting that ..., It's important to remember ..., In today's fast-paced world ..., In an ever-evolving landscape ...*, and reflexive closers *In conclusion, ..., Ultimately, ..., At the end of the day, ...*. Delete them and start with the actual content.
 
+Rhetorical setups do the same job: *What if I told you ..., Think about it: ...*, and the self-answered question. "Why did the launch slip? The vendor shipped late." → "The launch slipped because the vendor shipped late."
+
 ## 7. Uniform rhythm and structure
 
 Every paragraph the same length, every sentence ~20 words, every section opening "First, ... Second, ...". Human writing varies: mix short punchy sentences with longer ones, and let some paragraphs run two sentences and others six. (Reinforces A6.)
 
+Stacked fragments for drama are the same tell in reverse: "We cut the queue. And the retries. And the cache." → "We removed the queue, the retries and the cache."
+
 ## 8. Summary that summarizes nothing
 
 A closing paragraph that restates the opening without adding a takeaway, decision, action, or implication. If the conclusion carries no new information, cut it.
+
+The same goes for the fake-profound kicker, a closing aphorism or metaphor such as "The future isn't coming. It's already here." Delete it rather than polish it into a better metaphor, and end on the last concrete sentence or the next action.
 
 ## 9. Decorative formatting
 
@@ -57,6 +63,9 @@ A claim about how important something is, offered instead of the thing itself. T
 - *the X that matters, the real question, the real problem, this is the crux, the key insight is, that's what decides it, here's the thing, make no mistake, this is where it breaks down*
 - Bolded or headed leads that only announce the sentence after them: "**The credibility risk is the one that matters.**" followed by the sentence that actually explains why.
 - Titles and section headings that gesture at a topic instead of stating the finding: "What this means in practice", "Rethinking our approach", "The path forward".
+- Faux-insight setups that cast the writer as the lone expert: *what most people get wrong, here's what nobody tells you, the part everyone misses*.
+- Asides that tell the reader how to weigh the point: *this distinction matters, as you can see, that last part matters more than it sounds*.
+- Colon reveals, where a noun phrase and a colon stage a punchline: "The best part: it learns." → "It learns from each correction." Keep colons for lists, labels and quotes.
 
 **Test:** cover the sentence that follows. If the lead still carries information, keep it. If not, delete it and promote the next sentence, or compress the claim into the lead: "Self-declared RtB splits are gameable and nobody audits them."
 

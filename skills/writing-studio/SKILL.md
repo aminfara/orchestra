@@ -32,7 +32,7 @@ Load this skill whenever you are about to produce, expand, edit, or review prose
 
 ## Constraints
 
-- **Preserve the writer's intent and voice.** In review, do not rewrite meaning or flatten a distinctive voice into generic corporate prose. In generate, match the requested tone; do not impose a house style.
+- **Preserve the writer's intent and voice.** In review, do not rewrite meaning or flatten a distinctive voice into generic corporate prose. Make the minimum effective edit: fix what is broken and leave strong sentences as the writer wrote them. In generate, match the requested tone; do not impose a house style.
 - **Apply rules with judgment, not as a checklist.** Each universal rule names when it applies and when it does not. Clarity for the actual reader beats conformity. If a rule would hurt this format/tone/audience, skip it and (in review) say why.
 - **Never fabricate.** No invented quantification, sources, names, or dates. Name the gap (`[CLARIFY: ...]`) instead. This is enforced by the anti-hallucination pass in `references/universal-rules.md` (rule A9).
 - **Honor stated length limits as hard caps.** If content will not fit, ask what to cut rather than overflowing. In review, prioritize and deduplicate findings: group by impact (structure → substance → sentence-level) and report a repeated issue once with examples, not per-paragraph.

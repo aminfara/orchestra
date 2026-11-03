@@ -18,7 +18,7 @@ Plain language. Define terms the audience may not know; assume only the prior kn
 
 ### A3. Be specific
 
-Replace vague terms with concrete ones: who, when, what, how much. "We improved performance" → "p95 latency dropped from 800ms to 300ms in May." *Does not apply when* the source lacks the specifics — then name the dimension and mark `[CLARIFY: source]` rather than inventing a number (A9).
+Replace vague terms with concrete ones: who, when, what, how much. "We improved performance" → "p95 latency dropped from 800ms to 300ms in May." A sentence that could move unchanged into another team's document says nothing about this one, so replace it with a fact, mechanism or consequence of this subject: "This change helps us move faster" → "This change removes the manual approval step, which held each release for two days." *Does not apply when* the source lacks the specifics — then name the dimension and mark `[CLARIFY: source]` rather than inventing a number (A9).
 
 ### A4. Be concise
 
@@ -28,7 +28,7 @@ Concision cuts words, and keeps the subject, the verb and the reason of every se
 
 ### A5. Use active voice and name the actor
 
-"The team shipped X on Tuesday", not "X was shipped." Passive is fine when the actor is unknown or irrelevant, or when naming them would assign blame in a blameless context (then depersonalize: "the on-call rotation", not a passive dodge).
+"The team shipped X on Tuesday", not "X was shipped." Give human verbs to people, not to things: "A decision emerged from the review" → "The leads decided in the review." Passive is fine when the actor is unknown or irrelevant, or when naming them would assign blame in a blameless context (then depersonalize: "the on-call rotation", not a passive dodge).
 
 ### A6. Simple words, varied sentences
 
@@ -54,15 +54,17 @@ Never invent quantification, citations, names, or dates to sound complete. A nam
 
 ### A10. Cite external claims
 
-Attribute anything from an outside source (a statistic, a third-party fact). If you cannot attribute it, treat it as Unknown (A9).
+Attribute anything from an outside source (a statistic, a third-party fact). If you cannot attribute it, treat it as Unknown (A9). A vague source counts as none: "Studies show pairing cuts defects" → name the study, or cut the claim. The same goes for *experts agree, many argue, industry reports suggest*.
 
 ### A11. Inclusive, globally-readable language
 
 Avoid untranslatable idioms, single-region examples, time-zone-loaded phrasing ("by end of day" — whose day?), and ableist or gendered defaults. Write for any teammate in any office.
 
-### A12. Consistent, canonical names
+### A12. Consistent, canonical names and terms
 
 Spell product, vendor, team, and people names the same way every time, using their official spelling. Inconsistent names propagate through a knowledge base as downstream tools and readers repeat the error.
+
+Hold terms steady too. Once a concept has a name, repeat it rather than rotating synonyms for variety, because the reader assumes a new word means a new thing: "The agent reviews the draft. The assistant scores it." → "The agent reviews the draft and scores it."
 
 ### A13. Expand abbreviations on first use
 
