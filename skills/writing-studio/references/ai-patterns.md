@@ -54,7 +54,7 @@ The same goes for the fake-profound kicker, a closing aphorism or metaphor such 
 
 ## 9. Decorative formatting
 
-Bolding half a sentence, an emoji on every heading, formatting used to decorate rather than aid scanning. Use structure only where it earns its place. (For bullets-vs-prose, see A14.)
+Bolding half a sentence, headings nested deeper than the content needs, formatting used to decorate rather than aid scanning. Use structure only where it earns its place. (For bullets-vs-prose, see A14.)
 
 ## 10. Significance assertions standing in for content
 
