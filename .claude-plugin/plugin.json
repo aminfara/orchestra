@@ -1,6 +1,6 @@
 {
   "name": "orchestra",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Three skills: programming (test-first code and testing principles), writing-studio, and skill-linter",
   "author": {
     "name": "Ali Aminfar"
