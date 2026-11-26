@@ -8,7 +8,7 @@
     {
       "name": "orchestra",
       "source": "./",
-      "description": "Three skills: programming (test-first code and testing principles), writing-studio, and skill-linter"
+      "description": "Three skills: programming (design principles), writing-studio, and skill-linter"
     }
   ]
 }

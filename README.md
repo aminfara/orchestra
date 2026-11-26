@@ -4,7 +4,7 @@ A Claude Code marketplace, `orchestra`, with one plugin, `orchestra`, that holds
 
 | Skill | Use it for |
 | --- | --- |
-| `orchestra:programming` | Writing, changing or fixing code under one set of programming and testing principles |
+| `orchestra:programming` | Design principles to read before writing, changing or fixing code |
 | `orchestra:writing-studio` | Drafting documents and messages for other people to read |
 | `orchestra:skill-linter` | Checking a skill's `SKILL.md` against the house structure |
 
