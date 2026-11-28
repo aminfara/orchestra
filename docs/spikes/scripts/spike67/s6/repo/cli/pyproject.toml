@@ -1,0 +1,11 @@
+[project]
+name = "orchestra-spike6"
+version = "0.0.1"
+requires-python = ">=3.11"
+
+[project.scripts]
+orchestra = "orchestra_spike6:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

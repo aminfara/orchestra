@@ -1,0 +1,5 @@
+{
+  "permissions": {"allow": ["Bash(ls *)"], "deny": [], "defaultMode": "default"},
+  "enabledPlugins": {},
+  "sandbox": {"enabled": true, "allowUnsandboxedCommands": false, "autoAllowBashIfSandboxed": true}
+}

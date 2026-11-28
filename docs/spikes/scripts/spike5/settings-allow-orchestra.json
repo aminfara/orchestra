@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(orchestra *)"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  },
+  "sandbox": {
+    "enabled": true,
+    "allowUnsandboxedCommands": false,
+    "autoAllowBashIfSandboxed": true
+  }
+}
